@@ -10,6 +10,6 @@ public class SouvenirWriterTest {
 
     @Test
     public void testDoWrite() throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
-        new SouvenirWriter().doWrite();
+        SouvenirWriter.getInstance().doWrite();
     }
 }

@@ -17,6 +17,6 @@ public class ManufacturerWriterTest {
 
     @Test
     public void testWriteManufacturers() throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, IOException {
-        new ManufacturerWriter().writeManufacturers();
+        ManufacturerWriter.getInstance().writeManufacturers();
     }
 }

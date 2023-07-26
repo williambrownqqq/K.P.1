@@ -8,11 +8,15 @@ import org.example.reader.ManufacturerReader;
 import org.example.reader.SouvenirReader;
 
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SouvenirService {
+    public static int IDcounterManufacturer = 2;
+    public static int IDcounterSouvenir = 2;
+
     private List<Souvenir> souvenirs;
     private List<Manufacturer> manufacturers;
 
@@ -39,15 +43,13 @@ public class SouvenirService {
         manufacturers.add(manufacturer);
     }
 
-
-     // View all souvenirs and manufacturers
-    public List<Souvenir> viewAllSouvenirs() throws FileNotFoundException {
-        List<Souvenir> souvenirs = new SouvenirReader().readCsvFile();
+    public List<Souvenir> viewAllSouvenirs() throws IOException {
+        List<Souvenir> souvenirs = SouvenirReader.getInstance().readCsvFile();
         return souvenirs;
     }
 
     public List<Manufacturer> viewAllManufacturers() throws IOException {
-        List<Manufacturer> manufacturers = new ManufacturerReader().readCsvFile();
+        List<Manufacturer> manufacturers = ManufacturerReader.getInstance().readCsvFile();
         return manufacturers;
     }
 

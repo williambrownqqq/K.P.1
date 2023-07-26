@@ -4,6 +4,7 @@ import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.example.domain.Manufacturer;
 import org.example.domain.Souvenir;
+import org.example.repository.impl.ManufacturerRepositoryImpl;
 import org.example.service.SouvenirService;
 import org.example.writer.SouvenirWriter;
 
@@ -28,7 +29,9 @@ public class Main {
 
         // check it our file system them
 
-        SouvenirWriter writer = new SouvenirWriter();
-        writer.doWrite();
+//        SouvenirWriter writer = new SouvenirWriter();
+//        writer.doWrite();
+        ManufacturerRepositoryImpl manufacturerRepository = new ManufacturerRepositoryImpl();
+        manufacturerRepository.add();
     }
 }
