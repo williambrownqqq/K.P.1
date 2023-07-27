@@ -6,17 +6,23 @@ import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.example.domain.Manufacturer;
+import org.example.domain.Souvenir;
 import org.example.domainBuilder.ConcreteManufaturerBuilder;
 import org.example.domainBuilder.ManufacturerBuilder;
 import org.example.factoryWriter.WriterFactory;
 import org.example.factoryWriter.WriterForManufacturer;
 import org.example.reader.ManufacturerReader;
 import org.example.repository.MaufacturerRepository;
+import org.example.repository.SouvenirRepository;
 import org.example.writer.ManufacturerWriter;
+
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 public class ManufacturerRepositoryImpl implements MaufacturerRepository {
@@ -96,5 +102,42 @@ public class ManufacturerRepositoryImpl implements MaufacturerRepository {
 
         beanToCsv.write(allManufacturers);
         fileWriter.close();
+    }
+
+    public List<Manufacturer> getManufacturersByPrice() throws IOException {
+
+        List<Manufacturer> manufacturers = getAll();
+        SouvenirRepository repository = new SouvenirRepositoryImpl();
+        List<Souvenir> souvenirs = repository.getAll();
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter price: ");
+        double price = scanner.nextDouble();
+        List<Souvenir> filteredSouvenirs = souvenirs
+                .stream()
+                .filter(souvenir -> souvenir.getPrice() < price)
+                .toList();
+
+//        Set<Manufacturer> filteredManufacturers = filteredSouvenirs
+//                .stream()
+////                .map(Souvenir::getManufacturer)
+//                .filter(souvenirManufacurer -> manufacturers
+//                        .stream()
+//                        .anyMatch(manufacturer -> souvenirManufacurer.getManufacturer().equalsIgnoreCase(manufacturer.getName())))
+//                .collect(Collectors.toSet());
+
+        Set<String> manufacturerNamesFromFilteredSouvenirs = filteredSouvenirs
+                .stream()
+                .map(Souvenir::getManufacturer)
+                .collect(Collectors.toSet());
+
+        Set<Manufacturer> filteredManufacturers = manufacturers
+                .stream()
+                .filter(manufacturer -> manufacturerNamesFromFilteredSouvenirs
+                        .stream()
+                        .anyMatch(name -> manufacturer.getName().equalsIgnoreCase(name)))
+                .collect(Collectors.toSet());
+
+        return new ArrayList<>(filteredManufacturers);
     }
 }

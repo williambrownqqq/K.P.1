@@ -4,11 +4,14 @@ import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.example.domain.Manufacturer;
 import org.example.domain.Souvenir;
+import org.example.repository.SouvenirRepository;
 import org.example.repository.impl.ManufacturerRepositoryImpl;
+import org.example.repository.impl.SouvenirRepositoryImpl;
 import org.example.service.SouvenirService;
 import org.example.writer.SouvenirWriter;
 
 import java.io.IOException;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
@@ -31,8 +34,21 @@ public class Main {
 
 //        SouvenirWriter writer = new SouvenirWriter();
 //        writer.doWrite();
-        ManufacturerRepositoryImpl manufacturerRepository = new ManufacturerRepositoryImpl();
+//        ManufacturerRepositoryImpl manufacturerRepository = new ManufacturerRepositoryImpl();
 //        manufacturerRepository.add();
-        manufacturerRepository.update(2);
+//        manufacturerRepository.update(2);
+        SouvenirRepositoryImpl souvenirRepository = new SouvenirRepositoryImpl();
+        ManufacturerRepositoryImpl manufacturerRepository = new ManufacturerRepositoryImpl();
+        // 1
+//        List<Souvenir> souvenirsByManufacturer = souvenirRepository.getSouvenirsByManufacturer();
+//        souvenirsByManufacturer.stream().forEach(System.out::println);
+
+        // 2
+//        List<Souvenir> souvenirsByCountry = souvenirRepository.getSouvenirsByCountry();
+//        souvenirsByCountry.stream().forEach(System.out::println);
+
+        // 3
+        List<Manufacturer> manufacturersByPrice = manufacturerRepository.getManufacturersByPrice();
+        manufacturersByPrice.stream().forEach(System.out::println);
     }
 }

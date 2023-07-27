@@ -29,6 +29,47 @@ public class SouvenirRepositoryImpl implements SouvenirRepository {
         return souvenirs;
     }
 
+    public List<Souvenir> getSouvenirsByManufacturer() throws IOException {
+        List<Souvenir> souvenirs = getAll();
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter manufacturer: ");
+        String manufacturer = scanner.nextLine();
+//        souvenirs.stream()
+//                .filter(souvenir -> souvenir.getManufacturer().equalsIgnoreCase(manufacturer))
+//                .forEach(System.out::println);
+        List<Souvenir> filteredSouvenirs = souvenirs
+                .stream()
+                .filter(souvenir -> souvenir.getManufacturer().equalsIgnoreCase(manufacturer))
+                .toList();
+        return filteredSouvenirs;
+    }
+
+    public List<Souvenir> getSouvenirsByCountry() throws IOException {
+        List<Souvenir> souvenirs = getAll();
+        ManufacturerRepositoryImpl repository = new ManufacturerRepositoryImpl();
+        List<Manufacturer> manufacturers = repository.getAll();
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter сountry: ");
+        String country = scanner.nextLine();
+        List<Manufacturer> filteredManufacturers = manufacturers
+                .stream()
+                .filter(manufacturer -> manufacturer.getCountry().equalsIgnoreCase(country))
+                .toList();
+        List<Souvenir> filteredSouvenirs = souvenirs
+                .stream()
+                .filter(souvenir -> filteredManufacturers
+                                .stream()
+                                .anyMatch(manufacturer -> souvenir.getManufacturer().equals(manufacturer.getName()))
+                        )
+                .toList();
+        return filteredSouvenirs;
+    }
+
+
     @Override
     public void add() throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
         List<Souvenir> souvenirs = getAll();
