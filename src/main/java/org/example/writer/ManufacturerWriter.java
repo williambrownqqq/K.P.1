@@ -43,11 +43,11 @@ public class ManufacturerWriter { // implement Singleton
                 .build();
 
         ManufacturerBuilder builder = new ConcreteManufaturerBuilder();
-        Manufacturer manufacturer1 =  builder.setId(1)
+        Manufacturer manufacturer1 =  builder.setId(0)
                                                 .setName("Apple")
                                                 .setCountry("USA")
                                                 .build();
-        Manufacturer manufacturer2 =  builder.setId(2)
+        Manufacturer manufacturer2 =  builder.setId(1)
                                                 .setName("Samsung")
                                                 .setCountry("South Korea")
                                                 .build();

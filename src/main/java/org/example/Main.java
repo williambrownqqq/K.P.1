@@ -32,6 +32,7 @@ public class Main {
 //        SouvenirWriter writer = new SouvenirWriter();
 //        writer.doWrite();
         ManufacturerRepositoryImpl manufacturerRepository = new ManufacturerRepositoryImpl();
-        manufacturerRepository.add();
+//        manufacturerRepository.add();
+        manufacturerRepository.update(2);
     }
 }
