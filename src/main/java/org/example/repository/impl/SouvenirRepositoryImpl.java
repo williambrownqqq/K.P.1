@@ -8,13 +8,17 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.example.domain.Manufacturer;
 import org.example.domain.Souvenir;
 import org.example.factoryWriter.WriterForManufacturer;
+import org.example.factoryWriter.WriterForSouvenir;
 import org.example.reader.SouvenirReader;
 import org.example.repository.SouvenirRepository;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SouvenirRepositoryImpl implements SouvenirRepository {
     @Override
@@ -114,7 +118,7 @@ public class SouvenirRepositoryImpl implements SouvenirRepository {
 
     @Override
     public void saveAll(List<Souvenir> souvenirs) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
-        WriterForManufacturer writer = new WriterForManufacturer();
+        WriterForSouvenir writer = new WriterForSouvenir();
         FileWriter fileWriter = writer.getFileWriter();
 
         StatefulBeanToCsv<Souvenir> beanToCsv = new StatefulBeanToCsvBuilder<Souvenir>(fileWriter)
@@ -125,5 +129,38 @@ public class SouvenirRepositoryImpl implements SouvenirRepository {
 
         beanToCsv.write(souvenirs);
         fileWriter.close();
+    }
+
+    public Map<String, List<Souvenir>>  souvenirsByYear() throws IOException {
+        List<Souvenir> souvenirs = getAll();
+        ManufacturerRepositoryImpl repository = new ManufacturerRepositoryImpl();
+        List<Manufacturer> manufacturers = repository.getAll();
+        Set<String> years = souvenirs
+                .stream()
+                .map(souvenir -> souvenir.getProductionDate())
+                .collect(Collectors.toSet());
+
+        Map<String, List<Souvenir>> souvenirsByYear = souvenirs
+                .stream()
+                .collect(Collectors.groupingBy(Souvenir::getProductionDate));
+
+        return souvenirsByYear;
+    }
+
+    public void printSouvenirsWithYear() throws IOException {
+        Map<String, List<Souvenir>> souvenirsByYear = souvenirsByYear();
+
+        for (Map.Entry<String, List<Souvenir>> entry : souvenirsByYear.entrySet()) {
+            String souvenirName = entry.getKey();
+            List<Souvenir> souvenirs = entry.getValue();
+
+            System.out.println("Year: " + souvenirName);
+            System.out.println("Souvenirs: ");
+            for (Souvenir souvenir : souvenirs) {
+                System.out.println("- " + souvenir.getName() + " (" + souvenir.getPrice() + ")");
+            }
+            System.out.println(); // Add a blank line between each manufacturer's souvenirs
+        }
+
     }
 }

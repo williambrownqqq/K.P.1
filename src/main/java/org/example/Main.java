@@ -12,6 +12,7 @@ import org.example.writer.SouvenirWriter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
@@ -48,7 +49,20 @@ public class Main {
 //        souvenirsByCountry.stream().forEach(System.out::println);
 
         // 3
-        List<Manufacturer> manufacturersByPrice = manufacturerRepository.getManufacturersByPrice();
-        manufacturersByPrice.stream().forEach(System.out::println);
+//        List<Manufacturer> manufacturersByPrice = manufacturerRepository.getManufacturersByPrice();
+//        manufacturersByPrice.stream().forEach(System.out::println);
+        // 4
+        //manufacturerRepository.printAllManufacturersWithSouvenirs();
+        // 5
+//        List<Manufacturer> manufacturersBySouvenirAndYear = manufacturerRepository.getManufacturersBySouvenirAndYear();
+//        manufacturersBySouvenirAndYear.stream().forEach(System.out::println);
+//
+        // 7
+        //souvenirRepository.printSouvenirsWithYear();
+
+        // 8
+        manufacturerRepository.deleteSouvenirsByManufacturer();
+
     }
+
 }
