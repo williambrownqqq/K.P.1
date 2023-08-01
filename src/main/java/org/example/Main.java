@@ -4,64 +4,86 @@ import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.example.domain.Manufacturer;
 import org.example.domain.Souvenir;
+import org.example.reader.EntityReader;
+import org.example.reader.factory.EntityReaderFactory;
+import org.example.reader.factory.impl.EntityReaderFactoryImpl;
+import org.example.repository.ManufacturerRepository;
 import org.example.repository.SouvenirRepository;
 import org.example.repository.impl.ManufacturerRepositoryImpl;
 import org.example.repository.impl.SouvenirRepositoryImpl;
+import org.example.service.ManufacturerService;
 import org.example.service.SouvenirService;
-import org.example.writer.SouvenirWriter;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 public class Main {
     public static void main(String[] args) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
-//        SouvenirService service = new SouvenirService();
-//
-//        // add some manufacturers and Souvenirs
-//        Manufacturer manufacturer1 = new Manufacturer("Manufacturer 1", "South Korea");
-//        Manufacturer manufacturer2 = new Manufacturer("Manufacturer 2", "The United States");
-//        service.addManufacturer(manufacturer1);
-//        service.addManufacturer(manufacturer2);
-//
-//        Souvenir souvenir1 = new Souvenir("Souvenir 1", "Manufacturer 1", "2021", 10.0);
-//        Souvenir souvenir2 = new Souvenir("Souvenir 2", "Manufacturer 2", "2022", 15.0);
-//        Souvenir souvenir3 = new Souvenir("Souvenir 3", "Manufacturer 2", "2023", 20.0);
-//        service.addSouvenir(souvenir1);
-//        service.addSouvenir(souvenir2);
-//        service.addSouvenir(souvenir3);
+        String souvenirPath = args[0];
+        String manufacturerPath = args[1];
+        // get readers for each entity
 
-        // check it our file system them
+//        EntityReaderImpl<Souvenir> souvenirEntityReader = new EntityReaderImpl<>(souvenirPath, Souvenir.class);
+//        EntityReaderImpl<Manufacturer> manufacturerEntityReader = new EntityReaderImpl<>(manufacturerPath, Manufacturer.class);
 
-//        SouvenirWriter writer = new SouvenirWriter();
-//        writer.doWrite();
-//        ManufacturerRepositoryImpl manufacturerRepository = new ManufacturerRepositoryImpl();
-//        manufacturerRepository.add();
-//        manufacturerRepository.update(2);
-        SouvenirRepositoryImpl souvenirRepository = new SouvenirRepositoryImpl();
-        ManufacturerRepositoryImpl manufacturerRepository = new ManufacturerRepositoryImpl();
+        // get readers by factory
+        EntityReaderFactory entityReaderFactory = new EntityReaderFactoryImpl();
+        EntityReader<Manufacturer> manufacturerEntityReader = entityReaderFactory.createEntityReader(manufacturerPath, Manufacturer.class);
+        EntityReader<Souvenir> souvenirEntityReader = entityReaderFactory.createEntityReader(souvenirPath, Souvenir.class);
+
+        List<Manufacturer> manufacturers = manufacturerEntityReader.readCsvFile();
+        manufacturers.forEach(System.out::println);
+
+        List<Souvenir> souvenirs = souvenirEntityReader.readCsvFile();
+        souvenirs.forEach(System.out::println);
+
+//        ManufacturerReader manufacturerReader = new ManufacturerReader(manufacturerPath);
+//        SouvenirReader souvenirReader = new SouvenirReader(souvenirPath);
+//
+        SouvenirRepository souvenirRepository = new SouvenirRepositoryImpl(souvenirPath, souvenirEntityReader, manufacturerEntityReader);
+        ManufacturerRepository manufacturerRepository = new ManufacturerRepositoryImpl(manufacturerPath, manufacturerEntityReader,souvenirEntityReader);
+
+        SouvenirService souvenirService = new SouvenirService(souvenirRepository, manufacturerRepository,souvenirPath, souvenirEntityReader, manufacturerEntityReader);
+        ManufacturerService manufacturerService = new ManufacturerService(souvenirRepository, manufacturerRepository, manufacturerPath, souvenirEntityReader, manufacturerEntityReader);
+
+        // get
+        List<Souvenir> souvenirsList = souvenirService.viewAllSouvenirs();
+        souvenirsList.stream().forEach(System.out::println);
+
+        List<Manufacturer> manufacturersList = manufacturerService.viewAllManufacturers();
+        manufacturersList.stream().forEach(System.out::println);
+
+        // delete
+        //ouvenirService.deleteSouvenir();
+
+        // update
+//        souvenirService.updateSouvenir();
+        // add
+//        souvenirService.addSouvenir();
+
         // 1
-//        List<Souvenir> souvenirsByManufacturer = souvenirRepository.getSouvenirsByManufacturer();
+//        List<Souvenir> souvenirsByManufacturer = souvenirService.getSouvenirsByManufacturer();
 //        souvenirsByManufacturer.stream().forEach(System.out::println);
 
         // 2
-//        List<Souvenir> souvenirsByCountry = souvenirRepository.getSouvenirsByCountry();
+//        List<Souvenir> souvenirsByCountry = souvenirService.getSouvenirsByCountry();
 //        souvenirsByCountry.stream().forEach(System.out::println);
 
         // 3
-//        List<Manufacturer> manufacturersByPrice = manufacturerRepository.getManufacturersByPrice();
+//        List<Manufacturer> manufacturersByPrice = manufacturerService.getManufacturersByPrice();
 //        manufacturersByPrice.stream().forEach(System.out::println);
         // 4
-        //manufacturerRepository.printAllManufacturersWithSouvenirs();
+//        manufacturerService.printAllManufacturersWithSouvenirs();
         // 5
-//        List<Manufacturer> manufacturersBySouvenirAndYear = manufacturerRepository.getManufacturersBySouvenirAndYear();
+//        List<Manufacturer> manufacturersBySouvenirAndYear = manufacturerService.getManufacturersBySouvenirAndYear();
 //        manufacturersBySouvenirAndYear.stream().forEach(System.out::println);
 //
         // 7
-        //souvenirRepository.printSouvenirsWithYear();
+//        souvenirService.printSouvenirsWithYear();
 
         // 8
-        manufacturerRepository.deleteSouvenirsByManufacturer();
+        //souvenirService.deleteSouvenirsByManufacturer();
+
 
     }
 

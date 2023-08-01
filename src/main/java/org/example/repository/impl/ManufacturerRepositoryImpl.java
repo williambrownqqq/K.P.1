@@ -7,14 +7,10 @@ import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.example.domain.Manufacturer;
 import org.example.domain.Souvenir;
-import org.example.domainBuilder.ConcreteManufaturerBuilder;
-import org.example.domainBuilder.ManufacturerBuilder;
-import org.example.factoryWriter.WriterFactory;
 import org.example.factoryWriter.WriterForManufacturer;
-import org.example.reader.ManufacturerReader;
-import org.example.repository.MaufacturerRepository;
-import org.example.repository.SouvenirRepository;
-import org.example.writer.ManufacturerWriter;
+import org.example.reader.EntityReader;
+import org.example.reader.factory.impl.EntityReaderFactoryImpl;
+import org.example.repository.ManufacturerRepository;
 
 import java.util.*;
 import java.io.FileWriter;
@@ -22,7 +18,18 @@ import java.io.IOException;
 import java.util.stream.Collectors;
 
 
-public class ManufacturerRepositoryImpl implements MaufacturerRepository {
+public class ManufacturerRepositoryImpl implements ManufacturerRepository {
+    private final String path;
+    private final EntityReader<Souvenir> souvenirEntityReader;
+    private final EntityReader<Manufacturer> manufacturerEntityReader;
+
+    public ManufacturerRepositoryImpl(String path,EntityReader<Manufacturer> manufacturerEntityReader,EntityReader<Souvenir> souvenirEntityReader) {
+        this.path = path;
+//        this.manufacturerEntityReader = new EntityReaderFactoryImpl().createEntityReader(path, Manufacturer.class);
+        this.manufacturerEntityReader = manufacturerEntityReader;
+        this.souvenirEntityReader = souvenirEntityReader;
+    }
+
     @Override
     public Manufacturer getById(Integer id) throws IOException {
         List<Manufacturer> manufacturerList = getAll();
@@ -31,59 +38,23 @@ public class ManufacturerRepositoryImpl implements MaufacturerRepository {
 
     @Override
     public List<Manufacturer> getAll() throws IOException {
-        List<Manufacturer> manufacturerList = ManufacturerReader.getInstance().readCsvFile();
+        List<Manufacturer> manufacturerList = manufacturerEntityReader.readCsvFile();
         return manufacturerList;
     }
 
     @Override
-    public void add() throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
-        List<Manufacturer> manufacturerList = getAll();
-        int lastId = manufacturerList.size();
-        System.out.println(lastId);
+    public void add(String name,String country) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
+        List<Manufacturer> manufacturers = getAll();
+        int lastId = manufacturers.size();
 
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.print("Enter name: ");
-        String name = scanner.nextLine();
-
-        System.out.print("Enter country: ");
-        String country = scanner.nextLine();
-//            String name = "max";
-//            String country = "ua";
-        manufacturerList.add(new Manufacturer(lastId++, name, country));
-
-//        WriterFactory writerFactory = new WriterFactory();
-//        FileWriter writer = writerFactory.createWrite("manufacturers.csv").getFileWriter(true);
-//
-//        StatefulBeanToCsv<Manufacturer> beanToCsv = new StatefulBeanToCsvBuilder<Manufacturer>(writer)
-//                .withSeparator(';')
-//                .withLineEnd(CSVWriter.DEFAULT_LINE_END)
-//                .withOrderedResults(true)
-//                .build();
-//
-//        beanToCsv.write(manufacturerList);
-//        writer.close();
-        saveAll(manufacturerList);
-    }
-
-    @Override
-    public void update(int id) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
-        List<Manufacturer> allManufacturers = getAll();
-        delete(id);
-//        Scanner scanner = new Scanner(System.in);
-//
-//        System.out.print("Enter name: ");
-//        String name = scanner.nextLine();
-//
-//        System.out.print("Enter country: ");
-//        String country = scanner.nextLine();
-        add();
+        manufacturers.add(new Manufacturer((long) ++lastId, name, country));
+        saveAll(manufacturers);
     }
 
     @Override
     public void delete(int id) throws CsvDataTypeMismatchException, IOException, CsvRequiredFieldEmptyException {
         List<Manufacturer> allManufacturers = getAll();
-        allManufacturers.removeIf(manufacturer -> manufacturer.getId() == id);
+        allManufacturers.remove(id);
         saveAll(allManufacturers);
     }
     @Override
@@ -101,27 +72,18 @@ public class ManufacturerRepositoryImpl implements MaufacturerRepository {
         fileWriter.close();
     }
 
-    public List<Manufacturer> getManufacturersByPrice() throws IOException {
+    @Override
+    public List<Souvenir> deleteSouvenirsByManufacturer(List<Souvenir> souvenirs, List<Souvenir> matchingSouvenirs) throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, IOException {
+        souvenirs.removeAll(matchingSouvenirs);
+        return souvenirs;
+        //saveAll(souvenirs);
+    }
 
-        List<Manufacturer> manufacturers = getAll();
-        SouvenirRepository repository = new SouvenirRepositoryImpl();
-        List<Souvenir> souvenirs = repository.getAll();
-
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter price: ");
-        double price = scanner.nextDouble();
+    public List<Manufacturer> getManufacturersByPrice(double price, List<Manufacturer> manufacturers, List<Souvenir> souvenirs) throws IOException {
         List<Souvenir> filteredSouvenirs = souvenirs
                 .stream()
                 .filter(souvenir -> souvenir.getPrice() < price)
                 .toList();
-
-//        Set<Manufacturer> filteredManufacturers = filteredSouvenirs
-//                .stream()
-////                .map(Souvenir::getManufacturer)
-//                .filter(souvenirManufacurer -> manufacturers
-//                        .stream()
-//                        .anyMatch(manufacturer -> souvenirManufacurer.getManufacturer().equalsIgnoreCase(manufacturer.getName())))
-//                .collect(Collectors.toSet());
 
         Set<String> manufacturerNamesFromFilteredSouvenirs = filteredSouvenirs
                 .stream()
@@ -138,48 +100,14 @@ public class ManufacturerRepositoryImpl implements MaufacturerRepository {
         return new ArrayList<>(filteredManufacturers);
     }
 
-    public Map<String, List<Souvenir>> getAllManufacturersWithSouvenirs() throws IOException {
-//        List<Manufacturer> manufacturers = getAll();
-        SouvenirRepository repository = new SouvenirRepositoryImpl();
-        List<Souvenir> souvenirs = repository.getAll();
-
-//        List<String> manufacturersNames = manufacturers
-//                .stream()
-//                .map(manufacturer -> manufacturer.getName())
-//                .toList();
+    public Map<String, List<Souvenir>> getAllManufacturersWithSouvenirs(List<Souvenir> souvenirs) throws IOException {
         Map<String, List<Souvenir>> manufacturersWithSouvenirs = souvenirs.stream()
                 .collect(Collectors.groupingBy(Souvenir::getManufacturer));
 
         return manufacturersWithSouvenirs;
     }
 
-    public void printAllManufacturersWithSouvenirs() throws IOException {
-        Map<String, List<Souvenir>> manufacturersWithSouvenirs = getAllManufacturersWithSouvenirs();
-
-        for (Map.Entry<String, List<Souvenir>> entry : manufacturersWithSouvenirs.entrySet()) {
-            String manufacturerName = entry.getKey();
-            List<Souvenir> souvenirs = entry.getValue();
-
-            System.out.println("Manufacturer: " + manufacturerName);
-            System.out.println("Souvenirs: ");
-            for (Souvenir souvenir : souvenirs) {
-                System.out.println("- " + souvenir.getName() + " (" + souvenir.getPrice() + ")");
-            }
-            System.out.println(); // Add a blank line between each manufacturer's souvenirs
-        }
-    }
-
-    public List<Manufacturer> getManufacturersBySouvenirAndYear() throws IOException {
-        List<Manufacturer> manufacturers = getAll();
-        SouvenirRepository repository = new SouvenirRepositoryImpl();
-        List<Souvenir> souvenirs = repository.getAll();
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.print("Enter souvenir name: ");
-        String name = scanner.nextLine();
-
-        System.out.print("Enter year: ");
-        String productionDate = scanner.nextLine();
+    public List<Manufacturer> getManufacturersBySouvenirAndYear(String name, String productionDate, List<Manufacturer> manufacturers, List<Souvenir> souvenirs) throws IOException {
 
         // Filter the souvenirs based on the provided name and production year
         List<Souvenir> filteredSouvenirs = souvenirs
@@ -197,33 +125,8 @@ public class ManufacturerRepositoryImpl implements MaufacturerRepository {
         List<Manufacturer> filteredManufacturers = manufacturers.stream()
                 .filter(manufacturer -> manufacturerNames.contains(manufacturer.getName()))
                 .collect(Collectors.toList());
-
-        // why does not work?
-//        List<Manufacturer> filteredManufacturers = manufacturers
-//                .stream()
-//                .filter(manufacturer -> manufacturer.getName().equalsIgnoreCase(filteredSouvenirs.stream().map(souvenir -> souvenir.getManufacturer()).toString())).toList();
         return filteredManufacturers;
     }
 
-    public void deleteSouvenirsByManufacturer() throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
-        List<Manufacturer> manufacturers = getAll();
-        SouvenirRepository repository = new SouvenirRepositoryImpl();
-        List<Souvenir> souvenirs = repository.getAll();
-        Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Enter manufacturer name : ");
-        String manufacturerName = scanner.nextLine();
-
-        List<Souvenir> filteredSouvenirs = souvenirs
-                .stream()
-                .filter(souvenir -> !souvenir.getManufacturer().equalsIgnoreCase(manufacturerName))
-                .toList();
-
-        repository.saveAll(filteredSouvenirs);
-        List<Manufacturer> filteredManufacturers = manufacturers
-                .stream()
-                .filter(manufacturer -> !manufacturer.getName().equalsIgnoreCase(manufacturerName))
-                .toList();
-        saveAll(filteredManufacturers);
-    }
 }

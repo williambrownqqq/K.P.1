@@ -6,8 +6,6 @@ import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.example.domain.Manufacturer;
-import org.example.domainBuilder.ConcreteManufaturerBuilder;
-import org.example.domainBuilder.ManufacturerBuilder;
 import org.example.factoryWriter.WriterFactory;
 
 import java.io.IOException;
@@ -42,14 +40,15 @@ public class ManufacturerWriter { // implement Singleton
                 .withOrderedResults(true)
                 .build();
 
-        ManufacturerBuilder builder = new ConcreteManufaturerBuilder();
-        Manufacturer manufacturer1 =  builder.setId(0)
-                                                .setName("Apple")
-                                                .setCountry("USA")
+        Manufacturer.ManufacturerBuilder builder = new Manufacturer.ManufacturerBuilder();
+        Manufacturer manufacturer1 =  builder.id(0L)
+                                                .name("Apple")
+                                                .country("USA")
                                                 .build();
-        Manufacturer manufacturer2 =  builder.setId(1)
-                                                .setName("Samsung")
-                                                .setCountry("South Korea")
+        builder = new Manufacturer.ManufacturerBuilder();
+        Manufacturer manufacturer2 =  builder.id(1L)
+                                                .name("Samsung")
+                                                .country("South Korea")
                                                 .build();
         List<Manufacturer> manufacturerList = List.of(
                 manufacturer1,

@@ -6,8 +6,6 @@ import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.example.domain.Souvenir;
-import org.example.domainBuilder.ConcreteSouvenirBuilder;
-import org.example.domainBuilder.SouvenirBuilder;
 import org.example.factoryWriter.WriterFactory;
 
 import java.io.IOException;
@@ -21,57 +19,39 @@ public class SouvenirWriter {
     }
     public static SouvenirWriter getInstance() {
         if (instance == null) {
-            // Create the instance only if it doesn't exist
+            // Create the instanc   e only if it doesn't exist
             instance = new SouvenirWriter();
         }
         return instance;
     }
     public void doWrite() throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
-//        CSVWriter writer = new CSVWriter(new FileWriter("souvenirs.csv"),
-//                ';',
-//                '"',
-//                '\\',
-//                CSVWriter.DEFAULT_LINE_END);
-//        List<String[]> therows = new ArrayList<>();
-//        String[] header = new String[]{"id", "name", "manufacturer", "productionDate", "price"};
-//        therows.add(header);
-//
-//        String[] souvenir1 = new String[]{"1", "phone", "Apple", "2023", "1000"};
-//        String[] souvenir2 = new String[]{"2", "car", "Ford", "2022", "5000"};
-//        String[] souvenir3 = new String[]{"3", "plane", "Antonov", "2021", "9999"};
-//        therows.add(souvenir1);
-//        therows.add(souvenir2);
-//        therows.add(souvenir3);
-//
-//        writer.writeAll(therows);
-//        writer.close();
-
         WriterFactory writerFactory = new WriterFactory();
         Writer writer = writerFactory.createWrite("souvenirs.csv").getFileWriter();
+        String[] header = new String[]{"id", "name", "manufacturerId", "productionDate", "price"};
         //Writer writer = new FileWriter("souvenirs.csv");
         StatefulBeanToCsv<Souvenir> beanToCsv = new StatefulBeanToCsvBuilder<Souvenir>(writer)
                 .withSeparator(';')
                 .withLineEnd(CSVWriter.DEFAULT_LINE_END)
                 .withOrderedResults(true)
                 .build();
-        SouvenirBuilder builder = new ConcreteSouvenirBuilder();
-        Souvenir souvenir1 = builder.setId(1)
-                .setName("phone")
-                .setManufacturer("Apple")
-                .setProductionDate("2023")
-                .setPrice(1000)
+        Souvenir.SouvenirBuilder builder = new Souvenir.SouvenirBuilder();
+        Souvenir souvenir1 = builder.id(1L)
+                .name("phone")
+                .manufacturer("Apple")
+                .productionDate("2023")
+                .price(1000)
                 .build();
-        Souvenir souvenir2 = builder.setId(2)
-                .setName("car")
-                .setManufacturer("Ford")
-                .setProductionDate("2022")
-                .setPrice(5000)
+        Souvenir souvenir2 = builder.id(2L)
+                .name("car")
+                .manufacturer("Ford")
+                .productionDate("2022")
+                .price(5000)
                 .build();
-        Souvenir souvenir3 = builder.setId(3)
-                .setName("plane")
-                .setManufacturer("Antonov")
-                .setProductionDate("2021")
-                .setPrice(9999)
+        Souvenir souvenir3 = builder.id(3L)
+                .name("plane")
+                .manufacturer("Antonov")
+                .productionDate("2021")
+                .price(9999)
                 .build();
 //        List<Souvenir> SouvenirList = List.of(
 //                new Souvenir(1, "phone", "Apple", "2023", 1000),
