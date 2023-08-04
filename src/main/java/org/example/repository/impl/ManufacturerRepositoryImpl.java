@@ -9,8 +9,6 @@ import org.example.domain.Manufacturer;
 import org.example.domain.Souvenir;
 import org.example.reader.EntityReader;
 import org.example.repository.ManufacturerRepository;
-import org.example.writer.factory.EntityWriterFactory;
-import org.example.writer.factory.impl.EntityWriterFactoryImpl;
 
 import java.util.*;
 import java.io.FileWriter;
@@ -24,13 +22,11 @@ public class ManufacturerRepositoryImpl implements ManufacturerRepository {
     private final String path;
     private final EntityReader<Souvenir> souvenirEntityReader;
     private final EntityReader<Manufacturer> manufacturerEntityReader;
-//    private final EntityWriterFactory entityWriterFactory;
 
     public ManufacturerRepositoryImpl(String path,EntityReader<Manufacturer> manufacturerEntityReader,EntityReader<Souvenir> souvenirEntityReader) {
         this.path = path;
         this.manufacturerEntityReader = manufacturerEntityReader;
         this.souvenirEntityReader = souvenirEntityReader;
-//        this.entityWriterFactory= new EntityWriterFactoryImpl();
     }
 
     @Override

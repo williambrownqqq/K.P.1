@@ -5,8 +5,6 @@ import com.opencsv.bean.CsvToBeanBuilder;
 import org.example.domain.IdentifiableEntity;
 import org.example.domain.Manufacturer;
 import org.example.reader.EntityReader;
-import org.example.reader.factory.EntityReaderFactory;
-import org.example.reader.factory.impl.EntityReaderFactoryImpl;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -19,11 +17,9 @@ public class EntityReaderImpl<T extends IdentifiableEntity> implements EntityRea
 
     private final String path;
     private final Class<T> clazz;
-//    private final EntityReaderFactory entityReaderFactory;
     public EntityReaderImpl(String path, Class<T> clazz) {
         this.path = path;
         this.clazz = clazz;
-//        this.entityReaderFactory = new EntityReaderFactoryImpl();
     }
 
     @Override

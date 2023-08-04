@@ -49,38 +49,6 @@ public class Main {
         SouvenirService souvenirService = new SouvenirService(souvenirRepository, manufacturerRepository,souvenirPath, souvenirEntityReader, manufacturerEntityReader);
         ManufacturerService manufacturerService = new ManufacturerService(souvenirRepository, manufacturerRepository, manufacturerPath, souvenirEntityReader, manufacturerEntityReader);
 
-
-        // delete
-        //ouvenirService.deleteSouvenir();
-
-        // update
-//        souvenirService.updateSouvenir();
-        // add
-//        souvenirService.addSouvenir();
-
-        // 1
-//        List<Souvenir> souvenirsByManufacturer = souvenirService.getSouvenirsByManufacturer();
-//        souvenirsByManufacturer.stream().forEach(System.out::println);
-
-        // 2
-//        List<Souvenir> souvenirsByCountry = souvenirService.getSouvenirsByCountry();
-//        souvenirsByCountry.stream().forEach(System.out::println);
-
-        // 3
-//        List<Manufacturer> manufacturersByPrice = manufacturerService.getManufacturersByPrice();
-//        manufacturersByPrice.stream().forEach(System.out::println);
-        // 4
-//        manufacturerService.printAllManufacturersWithSouvenirs();
-        // 5
-//        List<Manufacturer> manufacturersBySouvenirAndYear = manufacturerService.getManufacturersBySouvenirAndYear();
-//        manufacturersBySouvenirAndYear.stream().forEach(System.out::println);
-//
-        // 7
-//        souvenirService.printSouvenirsWithYear();
-
-        // 8
-        //souvenirService.deleteSouvenirsByManufacturer();
-
         Scanner scanner = new Scanner(System.in);
         boolean continueExecution = true;
 
