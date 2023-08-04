@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class ManufacturerService {
     private final String manufacturerPath;
@@ -55,13 +56,17 @@ public class ManufacturerService {
         String manufacturerName = scanner.nextLine();
 
         List<Manufacturer> manufacturers = manufacturerRepository.getAll();
+//        List<Manufacturer> filteredManufacturers = manufacturers.stream()
+//                .filter(souvenir -> souvenir.getName().equalsIgnoreCase(manufacturerName))
+//                .toList();
         long id = manufacturers
                 .stream()
-                .filter(souvenir -> souvenir.getName().equals(manufacturerName))
+                .filter(manufacturer -> manufacturer.getName().equalsIgnoreCase(manufacturerName))
                 .mapToLong(Manufacturer::getId) // Assuming there's a method getId() to get the ID of the Souvenir
                 .findFirst() // Take the first matching souvenir's ID
                 .orElse(-1L);
-        souvenirRepository.delete(id);
+
+        manufacturerRepository.delete(id);
 
         System.out.print("Enter new name: ");
         String name = scanner.nextLine();
@@ -87,7 +92,7 @@ public class ManufacturerService {
                 .mapToLong(Manufacturer::getId) // Assuming there's a method getId() to get the ID of the Souvenir
                 .findFirst() // Take the first matching souvenir's ID
                 .orElse(-1L);
-        souvenirRepository.delete(id);
+        manufacturerRepository.delete(id);
     }
     public Manufacturer getManufacturerById(Integer id) throws IOException {
         return manufacturerRepository.getById(id);

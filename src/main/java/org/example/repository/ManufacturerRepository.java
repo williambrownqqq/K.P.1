@@ -13,7 +13,7 @@ public interface ManufacturerRepository {
     Manufacturer getById(Integer id) throws IOException;
     List<Manufacturer> getAll() throws IOException;
     void add(String name, String country) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException;
-    void delete(int id) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException;
+    void delete(long id) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException;
     void saveAll(List<Manufacturer> allManufacturers) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException;
     List<Souvenir> deleteSouvenirsByManufacturer(List<Souvenir> souvenirs, List<Souvenir> matchingSouvenir) throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, IOException;
     List<Manufacturer> getManufacturersByPrice(double price, List<Manufacturer> manufacturers, List<Souvenir> souvenirs) throws IOException;

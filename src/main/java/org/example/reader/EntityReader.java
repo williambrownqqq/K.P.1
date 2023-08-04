@@ -1,7 +1,7 @@
 package org.example.reader;
 
 import org.example.domain.IdentifiableEntity;
-import org.example.reader.factory.Reader;
+import org.example.reader.impl.Reader;
 
 import java.io.IOException;
 import java.util.List;

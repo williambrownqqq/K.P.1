@@ -7,27 +7,30 @@ import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.example.domain.Manufacturer;
 import org.example.domain.Souvenir;
-import org.example.factoryWriter.WriterForManufacturer;
 import org.example.reader.EntityReader;
-import org.example.reader.factory.impl.EntityReaderFactoryImpl;
 import org.example.repository.ManufacturerRepository;
+import org.example.writer.factory.EntityWriterFactory;
+import org.example.writer.factory.impl.EntityWriterFactoryImpl;
 
 import java.util.*;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
+import static org.example.writer.factory.EntityWriterFactory.createEntityWriter;
+
 
 public class ManufacturerRepositoryImpl implements ManufacturerRepository {
     private final String path;
     private final EntityReader<Souvenir> souvenirEntityReader;
     private final EntityReader<Manufacturer> manufacturerEntityReader;
+//    private final EntityWriterFactory entityWriterFactory;
 
     public ManufacturerRepositoryImpl(String path,EntityReader<Manufacturer> manufacturerEntityReader,EntityReader<Souvenir> souvenirEntityReader) {
         this.path = path;
-//        this.manufacturerEntityReader = new EntityReaderFactoryImpl().createEntityReader(path, Manufacturer.class);
         this.manufacturerEntityReader = manufacturerEntityReader;
         this.souvenirEntityReader = souvenirEntityReader;
+//        this.entityWriterFactory= new EntityWriterFactoryImpl();
     }
 
     @Override
@@ -52,15 +55,16 @@ public class ManufacturerRepositoryImpl implements ManufacturerRepository {
     }
 
     @Override
-    public void delete(int id) throws CsvDataTypeMismatchException, IOException, CsvRequiredFieldEmptyException {
+    public void delete(long id) throws CsvDataTypeMismatchException, IOException, CsvRequiredFieldEmptyException {
         List<Manufacturer> allManufacturers = getAll();
-        allManufacturers.remove(id);
+        allManufacturers.removeIf(manufacturer -> manufacturer.getId().equals(id)); // Remove the element at the specified index
         saveAll(allManufacturers);
+
+
     }
     @Override
     public void saveAll(List<Manufacturer> allManufacturers) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
-        WriterForManufacturer writer = new WriterForManufacturer();
-        FileWriter fileWriter = writer.getFileWriter();
+        FileWriter fileWriter = createEntityWriter(path, Manufacturer.class).getFileWriter();
 
         StatefulBeanToCsv<Manufacturer> beanToCsv = new StatefulBeanToCsvBuilder<Manufacturer>(fileWriter)
                 .withSeparator(';')
@@ -76,7 +80,6 @@ public class ManufacturerRepositoryImpl implements ManufacturerRepository {
     public List<Souvenir> deleteSouvenirsByManufacturer(List<Souvenir> souvenirs, List<Souvenir> matchingSouvenirs) throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, IOException {
         souvenirs.removeAll(matchingSouvenirs);
         return souvenirs;
-        //saveAll(souvenirs);
     }
 
     public List<Manufacturer> getManufacturersByPrice(double price, List<Manufacturer> manufacturers, List<Souvenir> souvenirs) throws IOException {

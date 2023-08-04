@@ -1,4 +1,4 @@
-package org.example.reader.factory;
+package org.example.reader.impl;
 
 import java.io.FileReader;
 import java.io.FileWriter;

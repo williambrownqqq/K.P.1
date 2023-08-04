@@ -1,4 +1,4 @@
-package org.example.factoryWriter;
+package org.example.writer.impl;
 
 import java.io.FileWriter;
 import java.io.IOException;

@@ -13,21 +13,22 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
+import static org.example.reader.factory.EntityReaderFactory.createEntityReader;
+
 public class EntityReaderImpl<T extends IdentifiableEntity> implements EntityReader<T> {
 
     private final String path;
     private final Class<T> clazz;
-    private final EntityReaderFactory entityReaderFactory;
+//    private final EntityReaderFactory entityReaderFactory;
     public EntityReaderImpl(String path, Class<T> clazz) {
         this.path = path;
         this.clazz = clazz;
-        this.entityReaderFactory = new EntityReaderFactoryImpl();
+//        this.entityReaderFactory = new EntityReaderFactoryImpl();
     }
 
     @Override
     public List<T> readCsvFile() throws IOException {
-        FileReader reader = entityReaderFactory.createEntityReader(path, Manufacturer.class).getFileReader();
-//        FileReader reader = FileReaderFactory.getReader(path);
+        FileReader reader = createEntityReader(path, Manufacturer.class).getFileReader();
         try (reader) {
             CsvToBean<T> csvToBean = new CsvToBeanBuilder<T>(reader)
                     .withType(clazz)

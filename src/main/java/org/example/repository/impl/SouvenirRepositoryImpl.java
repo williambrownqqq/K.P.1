@@ -7,9 +7,10 @@ import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.example.domain.Manufacturer;
 import org.example.domain.Souvenir;
-import org.example.factoryWriter.WriterForSouvenir;
 import org.example.reader.EntityReader;
 import org.example.repository.SouvenirRepository;
+import org.example.writer.factory.EntityWriterFactory;
+import org.example.writer.factory.impl.EntityWriterFactoryImpl;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -18,16 +19,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.example.writer.factory.EntityWriterFactory.createEntityWriter;
+
 public class SouvenirRepositoryImpl implements SouvenirRepository {
 
     private final String path;
     private final EntityReader<Souvenir> souvenirEntityReader;
     private final EntityReader<Manufacturer> manufacturerEntityReader;
+//    private final EntityWriterFactory entityWriterFactory;
 
     public SouvenirRepositoryImpl(String path, EntityReader<Souvenir> souvenirEntityReader, EntityReader<Manufacturer> manufacturerEntityReader) {
         this.path = path;
         this.souvenirEntityReader = souvenirEntityReader;
         this.manufacturerEntityReader = manufacturerEntityReader;
+//        this.entityWriterFactory = new EntityWriterFactoryImpl();
     }
 
     @Override
@@ -75,21 +80,20 @@ public class SouvenirRepositoryImpl implements SouvenirRepository {
         List<Souvenir> souvenirs = getAll();
         Long lastId = (long) souvenirs.size();
 
-        souvenirs.add(new Souvenir(++lastId, name, manufacturer, productionDate, price));
+        souvenirs.add(new Souvenir(lastId, name, manufacturer, productionDate, price));
         saveAll(souvenirs);
     }
 
     @Override
     public void delete(long id) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
         List<Souvenir> souvenirs = getAll();
-        souvenirs.remove(id);
+        souvenirs.removeIf(souvenir -> souvenir.getId().equals(id));
         saveAll(souvenirs);
     }
 
     @Override
     public void saveAll(List<Souvenir> souvenirs) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
-        WriterForSouvenir writer = new WriterForSouvenir();
-        FileWriter fileWriter = writer.getFileWriter();
+        FileWriter fileWriter = createEntityWriter(path, Souvenir.class).getFileWriter();
 
         StatefulBeanToCsv<Souvenir> beanToCsv = new StatefulBeanToCsvBuilder<Souvenir>(fileWriter)
                 .withSeparator(';')

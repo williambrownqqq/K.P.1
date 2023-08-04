@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class SouvenirService {
     private final String souvenirPath;
@@ -60,6 +61,10 @@ public class SouvenirService {
         String souvenirName = scanner.nextLine();
 
         List<Souvenir> souvenirs = souvenirRepository.getAll();
+        List<Souvenir> filteredSouvenirs = souvenirs.stream()
+                .filter(souvenir -> souvenir.getName().equalsIgnoreCase(souvenirName))
+                .toList();
+
        long id = souvenirs
                 .stream()
                 .filter(souvenir -> souvenir.getName().equals(souvenirName))
@@ -97,6 +102,7 @@ public class SouvenirService {
                 .mapToLong(Souvenir::getId) // Assuming there's a method getId() to get the ID of the Souvenir
                 .findFirst() // Take the first matching souvenir's ID
                 .orElse(-1L);
+
         souvenirRepository.delete(id);
     }
 
@@ -117,8 +123,15 @@ public class SouvenirService {
                 .filter(souvenir -> souvenir.getManufacturer().equalsIgnoreCase(manufacturerName))
                 .toList();
         List<Souvenir> souvenirList = manufacturerRepository.deleteSouvenirsByManufacturer(souvenirs, matchingSouvenirs);
-        souvenirRepository.saveAll(souvenirList);
 
+
+        List<Manufacturer> matchingManufacturers = manufacturers
+                .stream()
+                .filter(manufacturer -> manufacturer.getName().equalsIgnoreCase(manufacturerName))
+                .toList();
+        manufacturers.removeAll(matchingManufacturers);
+        souvenirRepository.saveAll(souvenirList);
+        manufacturerRepository.saveAll(manufacturers);
     }
 
     public List<Souvenir> getSouvenirsByManufacturer() throws IOException {
