@@ -17,3 +17,8 @@
     <li><a href="https://refactoring.guru/design-patterns/factory-method"><b>OpenCSV</b></a></li>
     <li><a href="https://refactoring.guru/design-patterns/factory-method"><b>SOLID principles</b></a></li>
 </ul>
+
+
+<p>To start the app you need to pass 2 arguments - pathes to files: </p>
+
+![image](https://github.com/williambrownqqq/K.P.1/assets/83639668/bc7d400a-b431-4900-83d0-f9d6f957da68)
