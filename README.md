@@ -13,7 +13,7 @@
 
 <p>Resources, what i've used: </p>
 <ul>
-    <li><a href="[https://refactoring.guru/design-patterns/singleton](https://developer.android.com/codelabs/basic-android-kotlin-training-repository-pattern#0)"><b>Patterns</b></a></li>
+    <li><a href="https://refactoring.guru/design-patterns/singleton](https://developer.android.com/codelabs/basic-android-kotlin-training-repository-pattern#0)"><b>Patterns</b></a></li>
     <li><a href="https://refactoring.guru/design-patterns/factory-method"><b>OpenCSV</b></a></li>
     <li><a href="https://refactoring.guru/design-patterns/factory-method"><b>SOLID principles</b></a></li>
 </ul>
