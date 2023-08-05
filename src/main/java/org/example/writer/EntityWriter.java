@@ -4,7 +4,6 @@ import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.example.domain.IdentifiableEntity;
 import org.example.writer.impl.Writer;
-
 import java.io.IOException;
 import java.util.List;
 

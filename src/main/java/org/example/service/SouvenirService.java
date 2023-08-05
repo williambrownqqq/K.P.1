@@ -7,26 +7,20 @@ import org.example.domain.Souvenir;
 import org.example.reader.EntityReader;
 import org.example.repository.ManufacturerRepository;
 import org.example.repository.SouvenirRepository;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class SouvenirService {
-    private final String souvenirPath;
     private final SouvenirRepository souvenirRepository;
     private final ManufacturerRepository manufacturerRepository;
     private final EntityReader<Souvenir> souvenirEntityReader;
-    private final EntityReader<Manufacturer> manufacturerEntityReader;
 
-    public SouvenirService(SouvenirRepository souvenirRepository, ManufacturerRepository manufacturerRepository, String souvenirPath, EntityReader<Souvenir> souvenirEntityReader, EntityReader<Manufacturer> manufacturerEntityReader) {
+    public SouvenirService(SouvenirRepository souvenirRepository, ManufacturerRepository manufacturerRepository, EntityReader<Souvenir> souvenirEntityReader) {
         this.souvenirRepository = souvenirRepository;
         this.manufacturerRepository = manufacturerRepository;
-        this.souvenirPath = souvenirPath;
         this.souvenirEntityReader = souvenirEntityReader;
-        this.manufacturerEntityReader = manufacturerEntityReader;
     }
 
     public List<Souvenir> getAll() throws IOException {
@@ -150,8 +144,7 @@ public class SouvenirService {
     }
     public Map<String, List<Souvenir>> souvenirsByYear() throws IOException {
         List<Souvenir> souvenirs = souvenirRepository.getAll();
-        List<Manufacturer> manufacturers = manufacturerRepository.getAll();
-        return souvenirRepository.souvenirsByYear(souvenirs, manufacturers);
+        return souvenirRepository.souvenirsByYear(souvenirs);
     }
     public void printSouvenirsWithYear() throws IOException {
         Map<String, List<Souvenir>> souvenirsByYear = souvenirsByYear();

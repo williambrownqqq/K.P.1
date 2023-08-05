@@ -7,25 +7,20 @@ import org.example.domain.Souvenir;
 import org.example.reader.EntityReader;
 import org.example.repository.ManufacturerRepository;
 import org.example.repository.SouvenirRepository;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class ManufacturerService {
-    private final String manufacturerPath;
+
     private final SouvenirRepository souvenirRepository;
     private final ManufacturerRepository manufacturerRepository;
-    private final EntityReader<Souvenir> souvenirEntityReader;
     private final EntityReader<Manufacturer> manufacturerEntityReader;
 
-    public ManufacturerService(SouvenirRepository souvenirRepository, ManufacturerRepository manufacturerRepository, String manufacturerPath, EntityReader<Souvenir> souvenirEntityReader, EntityReader<Manufacturer> manufacturerEntityReader) {
-        this.manufacturerPath = manufacturerPath;
+    public ManufacturerService(SouvenirRepository souvenirRepository, ManufacturerRepository manufacturerRepository, EntityReader<Manufacturer> manufacturerEntityReader) {
         this.souvenirRepository = souvenirRepository;
         this.manufacturerRepository = manufacturerRepository;
-        this.souvenirEntityReader = souvenirEntityReader;
         this.manufacturerEntityReader = manufacturerEntityReader;
     }
 
@@ -56,9 +51,6 @@ public class ManufacturerService {
         String manufacturerName = scanner.nextLine();
 
         List<Manufacturer> manufacturers = manufacturerRepository.getAll();
-//        List<Manufacturer> filteredManufacturers = manufacturers.stream()
-//                .filter(souvenir -> souvenir.getName().equalsIgnoreCase(manufacturerName))
-//                .toList();
         long id = manufacturers
                 .stream()
                 .filter(manufacturer -> manufacturer.getName().equalsIgnoreCase(manufacturerName))
@@ -124,6 +116,7 @@ public class ManufacturerService {
             System.out.println(); // Add a blank line between each manufacturer's souvenirs
         }
     }
+
     public List<Manufacturer> getManufacturersBySouvenirAndYear() throws IOException {
         List<Manufacturer> manufacturers = manufacturerRepository.getAll();
         List<Souvenir> souvenirs =souvenirRepository.getAll();

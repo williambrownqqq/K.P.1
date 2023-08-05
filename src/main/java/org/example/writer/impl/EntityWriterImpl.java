@@ -6,10 +6,7 @@ import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.example.domain.IdentifiableEntity;
-import org.example.domain.Manufacturer;
 import org.example.writer.EntityWriter;
-import org.example.writer.factory.EntityWriterFactory;
-import org.example.writer.factory.impl.EntityWriterFactoryImpl;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -19,12 +16,8 @@ import java.util.List;
 public class EntityWriterImpl<T extends IdentifiableEntity> implements EntityWriter<T> {
 
     private final String path;
-    private final Class<T> clazz;
-    private final EntityWriterFactory entityWriterFactory;
-    public EntityWriterImpl(String path, Class<T> clazz) {
+    public EntityWriterImpl(String path) {
         this.path = path;
-        this.clazz = clazz;
-        this.entityWriterFactory = new EntityWriterFactoryImpl();
     }
 
 

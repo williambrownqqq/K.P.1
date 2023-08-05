@@ -9,15 +9,12 @@ import org.example.domain.Manufacturer;
 import org.example.domain.Souvenir;
 import org.example.reader.EntityReader;
 import org.example.repository.SouvenirRepository;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
-
-import static org.example.writer.factory.EntityWriterFactory.createEntityWriter;
+import org.example.writer.factory.EntityWriterFactory;
 
 public class SouvenirRepositoryImpl implements SouvenirRepository {
 
@@ -42,7 +39,7 @@ public class SouvenirRepositoryImpl implements SouvenirRepository {
         List<Souvenir> souvenirs = souvenirEntityReader.readCsvFile();
         return souvenirs;
     }
-
+    @Override
     public List<Souvenir> getSouvenirsByManufacturer(String manufacturer) throws IOException {
         List<Souvenir> souvenirs = getAll();
         List<Souvenir> filteredSouvenirs = souvenirs
@@ -51,7 +48,7 @@ public class SouvenirRepositoryImpl implements SouvenirRepository {
                 .toList();
         return filteredSouvenirs;
     }
-
+    @Override
     public List<Souvenir> getSouvenirsByCountry(String country) throws IOException {
         List<Souvenir> souvenirs = getAll();
         ManufacturerRepositoryImpl repository = new ManufacturerRepositoryImpl(path, manufacturerEntityReader, souvenirEntityReader);
@@ -89,7 +86,7 @@ public class SouvenirRepositoryImpl implements SouvenirRepository {
 
     @Override
     public void saveAll(List<Souvenir> souvenirs) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
-        FileWriter fileWriter = createEntityWriter(path, Souvenir.class).getFileWriter();
+        FileWriter fileWriter = EntityWriterFactory.createEntityWriter(path, Souvenir.class).getFileWriter();
 
         StatefulBeanToCsv<Souvenir> beanToCsv = new StatefulBeanToCsvBuilder<Souvenir>(fileWriter)
                 .withSeparator(';')
@@ -100,13 +97,8 @@ public class SouvenirRepositoryImpl implements SouvenirRepository {
         beanToCsv.write(souvenirs);
         fileWriter.close();
     }
-
-    public Map<String, List<Souvenir>> souvenirsByYear(List<Souvenir> souvenirs, List<Manufacturer> manufacturers) throws IOException {
-        Set<String> years = souvenirs
-                .stream()
-                .map(souvenir -> souvenir.getProductionDate())
-                .collect(Collectors.toSet());
-
+    @Override
+    public Map<String, List<Souvenir>> souvenirsByYear(List<Souvenir> souvenirs) throws IOException {
         Map<String, List<Souvenir>> souvenirsByYear = souvenirs
                 .stream()
                 .collect(Collectors.groupingBy(Souvenir::getProductionDate));

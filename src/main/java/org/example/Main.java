@@ -5,9 +5,6 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.example.domain.Manufacturer;
 import org.example.domain.Souvenir;
 import org.example.reader.EntityReader;
-import org.example.reader.factory.EntityReaderFactory;
-import org.example.reader.factory.impl.EntityReaderFactoryImpl;
-import org.example.reader.impl.EntityReaderImpl;
 import org.example.repository.ManufacturerRepository;
 import org.example.repository.SouvenirRepository;
 import org.example.repository.impl.ManufacturerRepositoryImpl;
@@ -16,7 +13,6 @@ import org.example.service.ManufacturerService;
 import org.example.service.SouvenirService;
 import org.example.writer.EntityWriter;
 import org.example.writer.factory.EntityWriterFactory;
-import org.example.writer.factory.impl.EntityWriterFactoryImpl;
 
 import java.io.IOException;
 import java.util.List;
@@ -46,8 +42,8 @@ public class Main {
         SouvenirRepository souvenirRepository = new SouvenirRepositoryImpl(souvenirPath, souvenirEntityReader, manufacturerEntityReader);
         ManufacturerRepository manufacturerRepository = new ManufacturerRepositoryImpl(manufacturerPath, manufacturerEntityReader,souvenirEntityReader);
         // get services
-        SouvenirService souvenirService = new SouvenirService(souvenirRepository, manufacturerRepository,souvenirPath, souvenirEntityReader, manufacturerEntityReader);
-        ManufacturerService manufacturerService = new ManufacturerService(souvenirRepository, manufacturerRepository, manufacturerPath, souvenirEntityReader, manufacturerEntityReader);
+        SouvenirService souvenirService = new SouvenirService(souvenirRepository, manufacturerRepository, souvenirEntityReader);
+        ManufacturerService manufacturerService = new ManufacturerService(souvenirRepository, manufacturerRepository, manufacturerEntityReader);
 
         Scanner scanner = new Scanner(System.in);
         boolean continueExecution = true;
@@ -93,6 +89,7 @@ public class Main {
                 case 4:
                     List<Manufacturer> manufacturersByPrice = manufacturerService.getManufacturersByPrice();
                     manufacturersByPrice.stream().forEach(System.out::println);
+                    break;
                 case 5:
                     manufacturerService.printAllManufacturersWithSouvenirs();
                     break;
@@ -148,7 +145,6 @@ public class Main {
     }
 
     public static void loadManufacturer(String manufacturerPath) throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, IOException {
-        EntityWriterFactory entityWriterFactory = new EntityWriterFactoryImpl();
         EntityWriter<Manufacturer> manufacturerEntityWriter = createEntityWriter(manufacturerPath, Manufacturer.class);
         Manufacturer.ManufacturerBuilder builder = new Manufacturer.ManufacturerBuilder();
         Manufacturer manufacturer4 =  builder.id(4L)
@@ -168,17 +164,21 @@ public class Main {
                 .name("Antonov")
                 .country("UA")
                 .build();
+        Manufacturer manufacturer5 =  builder.id(5L)
+                .name("Dell")
+                .country("USA")
+                .build();
         List<Manufacturer> manufacturerList = List.of(
                 manufacturer1,
                 manufacturer2,
                 manufacturer3,
-                manufacturer4
+                manufacturer4,
+                manufacturer5
         );
         manufacturerEntityWriter.override(manufacturerList);
     }
 
     public static void loadSouvenir(String souvenirPath) throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, IOException {
-        EntityWriterFactory entityWriterFactory = new EntityWriterFactoryImpl();
         EntityWriter<Souvenir> souvenirEntityWriter = createEntityWriter(souvenirPath, Souvenir.class);
         Souvenir.SouvenirBuilder builder = new Souvenir.SouvenirBuilder();
 
@@ -200,13 +200,13 @@ public class Main {
                 .productionDate("2021")
                 .price(9999)
                 .build();
-        Souvenir souvenir4 = builder.id(2L)
+        Souvenir souvenir4 = builder.id(3L)
                 .name("phone")
                 .manufacturer("Apple")
                 .productionDate("2020")
                 .price(700)
                 .build();
-        Souvenir souvenir5 = builder.id(2L)
+        Souvenir souvenir5 = builder.id(4L)
                 .name("phone")
                 .manufacturer("Apple")
                 .productionDate("2021")

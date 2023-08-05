@@ -5,13 +5,11 @@ import com.opencsv.bean.CsvToBeanBuilder;
 import org.example.domain.IdentifiableEntity;
 import org.example.domain.Manufacturer;
 import org.example.reader.EntityReader;
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-
-import static org.example.reader.factory.EntityReaderFactory.createEntityReader;
+import org.example.reader.factory.EntityReaderFactory;
 
 public class EntityReaderImpl<T extends IdentifiableEntity> implements EntityReader<T> {
 
@@ -24,7 +22,7 @@ public class EntityReaderImpl<T extends IdentifiableEntity> implements EntityRea
 
     @Override
     public List<T> readCsvFile() throws IOException {
-        FileReader reader = createEntityReader(path, Manufacturer.class).getFileReader();
+        FileReader reader = EntityReaderFactory.createEntityReader(path, Manufacturer.class).getFileReader();
         try (reader) {
             CsvToBean<T> csvToBean = new CsvToBeanBuilder<T>(reader)
                     .withType(clazz)
