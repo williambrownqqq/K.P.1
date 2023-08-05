@@ -19,7 +19,7 @@ import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
 public class SouvenirRepositoryImplTest {
-    String manufacturerPath = "manufacturer.csv";
+    String manufacturerPath = "manufacturers.csv";
     String souvenirPath = "souvenirs.csv";
     private ManufacturerRepositoryImpl manufacturerRepository;
     private SouvenirRepositoryImpl souvenirRepository;
