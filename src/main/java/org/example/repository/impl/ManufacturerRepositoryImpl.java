@@ -107,7 +107,6 @@ public class ManufacturerRepositoryImpl implements ManufacturerRepository {
     }
     @Override
     public List<Manufacturer> getManufacturersBySouvenirAndYear(String name, String productionDate, List<Manufacturer> manufacturers, List<Souvenir> souvenirs) throws IOException {
-
         // Filter the souvenirs based on the provided name and production year
         List<Souvenir> filteredSouvenirs = souvenirs
                 .stream()
@@ -126,6 +125,4 @@ public class ManufacturerRepositoryImpl implements ManufacturerRepository {
                 .collect(Collectors.toList());
         return filteredManufacturers;
     }
-
-
 }

@@ -5,16 +5,13 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.example.domain.Manufacturer;
 import org.example.domain.Souvenir;
 import org.example.reader.EntityReader;
-import org.mockito.Mockito;
+import org.example.reader.factory.EntityReaderFactory;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import static org.example.reader.factory.EntityReaderFactory.createEntityReader;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
@@ -28,8 +25,8 @@ public class SouvenirRepositoryImplTest {
 
     @BeforeClass
     public void setUp() {
-        manufacturerEntityReader = createEntityReader(manufacturerPath, Manufacturer.class);
-        souvenirEntityReader = createEntityReader(souvenirPath, Souvenir.class);
+        manufacturerEntityReader = EntityReaderFactory.createEntityReader(manufacturerPath, Manufacturer.class);
+        souvenirEntityReader = EntityReaderFactory.createEntityReader(souvenirPath, Souvenir.class);
         souvenirRepository = new SouvenirRepositoryImpl(souvenirPath, souvenirEntityReader, manufacturerEntityReader);
         manufacturerRepository = new ManufacturerRepositoryImpl(manufacturerPath, manufacturerEntityReader, souvenirEntityReader);
     }
