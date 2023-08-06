@@ -9,10 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface ManufacturerRepository extends BaseRepository<Manufacturer>{
-     void add(String name, String country) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException;
     List<Souvenir> deleteSouvenirsByManufacturer(List<Souvenir> souvenirs, List<Souvenir> matchingSouvenir) throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, IOException;
     List<Manufacturer> getManufacturersByPrice(double price, List<Manufacturer> manufacturers, List<Souvenir> souvenirs) throws IOException;
-    Map<String, List<Souvenir>> getAllManufacturersWithSouvenirs(List<Souvenir> souvenirs) throws IOException;
     List<Manufacturer> getManufacturersBySouvenirAndYear(String name, String year, List<Manufacturer> manufacturers, List<Souvenir> souvenirs) throws IOException;
-
 }

@@ -10,7 +10,9 @@ import org.example.repository.SouvenirRepository;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class ManufacturerService {
 
@@ -42,8 +44,12 @@ public class ManufacturerService {
         System.out.print("Enter country: ");
         String country = scanner.nextLine();
 
+        Manufacturer manufacturer = Manufacturer.builder()
+                .name(name)
+                .country(country)
+                .build();
 
-        manufacturerRepository.add(name, country);
+        manufacturerRepository.add(manufacturer);
     }
     public void updateManufacturer() throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, IOException {
         Scanner scanner = new Scanner(System.in);
@@ -78,13 +84,13 @@ public class ManufacturerService {
         String manufacturerName = scanner.nextLine();
 
         List<Manufacturer> manufacturers = manufacturerRepository.getAll();
-        long id = manufacturers
+        Long id = manufacturers
                 .stream()
                 .filter(manufacturer -> manufacturer.getName().equals(manufacturerName))
-                .mapToLong(Manufacturer::getId) // Assuming there's a method getId() to get the ID of the Souvenir
+                .map(Manufacturer::getId) // Assuming there's a method getId() to get the ID of the Souvenir
                 .findFirst() // Take the first matching souvenir's ID
-                .orElse(-1L);
-        manufacturerRepository.delete(id);
+                .orElse(null);
+        manufacturerRepository.delete((long)id);
     }
     public Manufacturer getManufacturerById(Integer id) throws IOException {
         return manufacturerRepository.getById(id);
@@ -99,7 +105,8 @@ public class ManufacturerService {
     }
     public Map<String, List<Souvenir>> getAllManufacturersWithSouvenirs() throws IOException {
         List<Souvenir> souvenirs = souvenirRepository.getAll();
-        return manufacturerRepository.getAllManufacturersWithSouvenirs(souvenirs);
+        return souvenirs.stream()
+                .collect(Collectors.groupingBy(Souvenir::getManufacturer));
     }
     public void printAllManufacturersWithSouvenirs() throws IOException {
         Map<String, List<Souvenir>> manufacturersWithSouvenirs = getAllManufacturersWithSouvenirs();
@@ -129,6 +136,25 @@ public class ManufacturerService {
         String productionDate = scanner.nextLine();
 
         return manufacturerRepository.getManufacturersBySouvenirAndYear(name, productionDate, manufacturers, souvenirs);
+    }
+
+    public void deleteSouvenirsByManufacturer() throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter manufacturer name : ");
+        String manufacturerName = scanner.nextLine();
+
+        Manufacturer manufacturer = manufacturerRepository.getAll().stream()
+                .filter(e -> manufacturerName.equalsIgnoreCase(e.getName()))
+                .findFirst()
+                .orElse(null);
+        if(manufacturer == null) return;
+        List<Souvenir> matchingSouvenirs = souvenirRepository.getAll()
+                .stream()
+                .filter(souvenir -> souvenir.getManufacturer().equalsIgnoreCase(manufacturerName))
+                .toList();
+        souvenirRepository.deleteAll(matchingSouvenirs);
+        manufacturerRepository.delete(manufacturer.getId());
     }
 
 }

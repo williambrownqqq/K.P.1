@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.testng.Assert.*;
 import static org.testng.AssertJUnit.assertEquals;
@@ -63,15 +64,20 @@ public class ManufacturerRepositoryImplTest {
     @Test
     public void testAdd() throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, IOException {
         List<Manufacturer> testManufacturers = new ArrayList<>();
-        testManufacturers.add(new Manufacturer(0L, "Manufacturer 1", "Country 1"));
-        testManufacturers.add(new Manufacturer(1L, "Manufacturer 2", "Country 2"));
+        testManufacturers.add(new Manufacturer(1L, "Manufacturer 1", "Country 1"));
+        testManufacturers.add(new Manufacturer(2L, "Manufacturer 2", "Country 2"));
         manufacturerRepository.saveAll(testManufacturers);
 
-        manufacturerRepository.add("Manufacturer 3", "Country 3");
+        Manufacturer manufacturer = Manufacturer.builder()
+                .name("Manufacturer 3")
+                .country("Country 3")
+                .build();
+        manufacturerRepository.add(manufacturer);
         testManufacturers = manufacturerRepository.getAll();
 
         assertEquals(3, testManufacturers.size());
         Manufacturer addedManufacturer = testManufacturers.get(2);
+        assertEquals(Long.valueOf(3L), addedManufacturer.getId());
         assertEquals("Manufacturer 3", addedManufacturer.getName());
         assertEquals("Country 3", addedManufacturer.getCountry());
     }
@@ -138,36 +144,6 @@ public class ManufacturerRepositoryImplTest {
 
         assertEquals("Manufacturer 1",  getManufacturersByPrice.get(1).getName());
         assertEquals("Country 1",  getManufacturersByPrice.get(1).getCountry());
-    }
-
-    @Test
-    public void testGetAllManufacturersWithSouvenirs() throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, IOException {
-        List<Manufacturer> testManufacturers = new ArrayList<>();
-        testManufacturers.add(new Manufacturer(0L, "Manufacturer 1", "Country 1"));
-        testManufacturers.add(new Manufacturer(1L, "Manufacturer 2", "Country 2"));
-        List<Souvenir> testSouvenirs = new ArrayList<>();
-        testSouvenirs.add(new Souvenir(1L, "Test Souvenir 1", "Manufacturer 1", "2023-01-01", 10.0));
-        testSouvenirs.add(new Souvenir(2L, "Test Souvenir 2", "Manufacturer 2", "2023-01-01", 15.0));
-        testSouvenirs.add(new Souvenir(3L, "Test Souvenir 3", "Manufacturer 2", "2024-03-01", 20.0));
-        manufacturerRepository.saveAll(testManufacturers);
-        souvenirRepository.saveAll(testSouvenirs);
-
-        Map<String, List<Souvenir>> manufacturersWithSouvenirs = manufacturerRepository.getAllManufacturersWithSouvenirs(testSouvenirs);
-
-        assertEquals(2, manufacturersWithSouvenirs.size());
-        assertTrue(manufacturersWithSouvenirs.containsKey("Manufacturer 1"));
-        assertTrue(manufacturersWithSouvenirs.containsKey("Manufacturer 2"));
-
-        assertEquals(1, manufacturersWithSouvenirs.get("Manufacturer 1").size());
-        assertEquals(2, manufacturersWithSouvenirs.get("Manufacturer 2").size());
-
-        List<Souvenir> souvenirsForManufacturer1 = manufacturersWithSouvenirs.get("Manufacturer 1");
-        assertTrue(souvenirsForManufacturer1.contains(new Souvenir(1L, "Test Souvenir 1", "Manufacturer 1", "2023-01-01", 10.0)));
-
-        List<Souvenir> souvenirsForManufacturer2 = manufacturersWithSouvenirs.get("Manufacturer 2");
-        assertTrue(souvenirsForManufacturer2.contains(new Souvenir(2L, "Test Souvenir 2", "Manufacturer 2", "2023-01-01", 15.0)));
-        assertTrue(souvenirsForManufacturer2.contains(new Souvenir(3L, "Test Souvenir 3", "Manufacturer 2", "2024-03-01", 20.0)));
-
     }
 
     @Test

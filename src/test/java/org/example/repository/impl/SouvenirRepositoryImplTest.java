@@ -94,8 +94,8 @@ public class SouvenirRepositoryImplTest {
         testSouvenirs.add(new Souvenir(1L, "Test Souvenir 1", "Manufacturer 1", "2023-01-01", 10.0));
         testSouvenirs.add(new Souvenir(2L, "Test Souvenir 2", "Manufacturer 2", "2023-02-01", 15.0));
         souvenirRepository.saveAll(testSouvenirs);
-
-        souvenirRepository.add("New Souvenir", "New Manufacturer", "2023-08-04", 20.0);
+        Souvenir souvenir = new Souvenir(3L, "New Souvenir", "New Manufacturer", "2023-08-04", 20.0);
+        souvenirRepository.add(souvenir);
         testSouvenirs = souvenirRepository.getAll();
 
         assertEquals(3, testSouvenirs.size());

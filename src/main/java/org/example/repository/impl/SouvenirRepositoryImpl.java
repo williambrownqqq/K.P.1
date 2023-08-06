@@ -36,49 +36,37 @@ public class SouvenirRepositoryImpl implements SouvenirRepository {
 
     @Override
     public List<Souvenir> getAll() throws IOException {
-        List<Souvenir> souvenirs = souvenirEntityReader.readCsvFile();
-        return souvenirs;
+        return souvenirEntityReader.readCsvFile();
     }
     @Override
     public List<Souvenir> getSouvenirsByManufacturer(String manufacturer) throws IOException {
-        List<Souvenir> souvenirs = getAll();
-        List<Souvenir> filteredSouvenirs = souvenirs
+       return getAll()
                 .stream()
                 .filter(souvenir -> souvenir.getManufacturer().equalsIgnoreCase(manufacturer))
                 .toList();
-        return filteredSouvenirs;
     }
     @Override
-    public List<Souvenir> getSouvenirsByCountry(String country) throws IOException {
+    public void add(Souvenir souvenir) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
         List<Souvenir> souvenirs = getAll();
-        ManufacturerRepositoryImpl repository = new ManufacturerRepositoryImpl(path, manufacturerEntityReader, souvenirEntityReader);
-        List<Manufacturer> manufacturers = repository.getAll();
+        if(souvenir.getId() == null) {
+            long lastId = souvenirs.size();
+            souvenir.setId(++lastId);
+        }
 
-
-        List<Manufacturer> filteredManufacturers = manufacturers
-                .stream()
-                .filter(manufacturer -> manufacturer.getCountry().equalsIgnoreCase(country))
-                .toList();
-        List<Souvenir> filteredSouvenirs = souvenirs
-                .stream()
-                .filter(souvenir -> filteredManufacturers
-                                .stream()
-                                .anyMatch(manufacturer -> souvenir.getManufacturer().equals(manufacturer.getName()))
-                        )
-                .toList();
-        return filteredSouvenirs;
-    }
-    @Override
-    public void add(String name,String manufacturer, String productionDate, double price) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
-        List<Souvenir> souvenirs = getAll();
-        Long lastId = (long) souvenirs.size();
-
-        souvenirs.add(new Souvenir(lastId, name, manufacturer, productionDate, price));
+        souvenirs.add(souvenir);
         saveAll(souvenirs);
     }
 
     @Override
-    public void delete(long id) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
+    public void deleteAll(Iterable<Souvenir> entities) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
+        for (var souvenir:entities) {
+            delete(souvenir.getId());
+        }
+    }
+
+    @Override
+    public void delete(Long id) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
+        if(id == null) return;
         List<Souvenir> souvenirs = getAll();
         souvenirs.removeIf(souvenir -> souvenir.getId().equals(id));
         saveAll(souvenirs);
@@ -96,14 +84,6 @@ public class SouvenirRepositoryImpl implements SouvenirRepository {
 
         beanToCsv.write(souvenirs);
         fileWriter.close();
-    }
-    @Override
-    public Map<String, List<Souvenir>> souvenirsByYear(List<Souvenir> souvenirs) throws IOException {
-        Map<String, List<Souvenir>> souvenirsByYear = souvenirs
-                .stream()
-                .collect(Collectors.groupingBy(Souvenir::getProductionDate));
-
-        return souvenirsByYear;
     }
 
 

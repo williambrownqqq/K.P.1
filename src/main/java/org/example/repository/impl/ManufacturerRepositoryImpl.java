@@ -43,21 +43,30 @@ public class ManufacturerRepositoryImpl implements ManufacturerRepository {
     }
 
     @Override
-    public void add(String name,String country) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
+    public void add(Manufacturer manufacturer) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
         List<Manufacturer> manufacturers = getAll();
-        int lastId = manufacturers.size();
+        if(manufacturer.getId() == null) {
+            long lastId = manufacturers.size();
+            manufacturer.setId(++lastId);
+        }
 
-        manufacturers.add(new Manufacturer((long) ++lastId, name, country));
+        manufacturers.add(manufacturer);
         saveAll(manufacturers);
     }
 
     @Override
-    public void delete(long id) throws CsvDataTypeMismatchException, IOException, CsvRequiredFieldEmptyException {
+    public void deleteAll(Iterable<Manufacturer> entities) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
+        for (var manufacturer:entities) {
+            delete(manufacturer.getId());
+        }
+    }
+
+    @Override
+    public void delete(Long id) throws CsvDataTypeMismatchException, IOException, CsvRequiredFieldEmptyException {
+        if(id == null) return;
         List<Manufacturer> allManufacturers = getAll();
         allManufacturers.removeIf(manufacturer -> manufacturer.getId().equals(id)); // Remove the element at the specified index
         saveAll(allManufacturers);
-
-
     }
     @Override
     public void saveAll(List<Manufacturer> allManufacturers) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
@@ -80,30 +89,16 @@ public class ManufacturerRepositoryImpl implements ManufacturerRepository {
     }
     @Override
     public List<Manufacturer> getManufacturersByPrice(double price, List<Manufacturer> manufacturers, List<Souvenir> souvenirs) throws IOException {
-        List<Souvenir> filteredSouvenirs = souvenirs
+        Set<String> distinctFilteredManufacturersNames = souvenirs
                 .stream()
                 .filter(souvenir -> souvenir.getPrice() < price)
-                .toList();
-
-        Set<String> manufacturerNamesFromFilteredSouvenirs = filteredSouvenirs
-                .stream()
                 .map(Souvenir::getManufacturer)
                 .collect(Collectors.toSet());
 
-        Set<Manufacturer> filteredManufacturers = manufacturers
+        return manufacturers
                 .stream()
-                .filter(manufacturer -> manufacturerNamesFromFilteredSouvenirs
-                        .contains(manufacturer.getName()))
-                .collect(Collectors.toSet());
-
-        return new ArrayList<>(filteredManufacturers);
-    }
-    @Override
-    public Map<String, List<Souvenir>> getAllManufacturersWithSouvenirs(List<Souvenir> souvenirs) throws IOException {
-        Map<String, List<Souvenir>> manufacturersWithSouvenirs = souvenirs.stream()
-                .collect(Collectors.groupingBy(Souvenir::getManufacturer));
-
-        return manufacturersWithSouvenirs;
+                .filter(manufacturer -> distinctFilteredManufacturersNames.contains(manufacturer.getName()))
+                .collect(Collectors.toList());
     }
     @Override
     public List<Manufacturer> getManufacturersBySouvenirAndYear(String name, String productionDate, List<Manufacturer> manufacturers, List<Souvenir> souvenirs) throws IOException {

@@ -7,10 +7,14 @@ import org.example.domain.Souvenir;
 import org.example.reader.EntityReader;
 import org.example.repository.ManufacturerRepository;
 import org.example.repository.SouvenirRepository;
+import org.example.repository.impl.ManufacturerRepositoryImpl;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SouvenirService {
     private final SouvenirRepository souvenirRepository;
@@ -24,11 +28,9 @@ public class SouvenirService {
     }
 
     public List<Souvenir> getAll() throws IOException {
-        List<Souvenir> souvenirList = souvenirEntityReader.readCsvFile();
-        return souvenirList;
+        return souvenirEntityReader.readCsvFile();
     }
 
-    // Add
     public void addSouvenir() throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, IOException {
 
         Scanner scanner = new Scanner(System.in);
@@ -44,27 +46,27 @@ public class SouvenirService {
 
         System.out.print("Enter price: ");
         double price = scanner.nextDouble();
-        souvenirRepository.add(name, manufacturer, productionDate, price);
+
+        Souvenir souvenir = Souvenir.builder()
+                .name(name)
+                .manufacturer(manufacturer)
+                .productionDate(productionDate)
+                .price(price)
+                .build();
+        souvenirRepository.add(souvenir);
     }
-
-    // Update
     public void updateSouvenir() throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, IOException {
-
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter Souvenir name : ");
         String souvenirName = scanner.nextLine();
-
         List<Souvenir> souvenirs = souvenirRepository.getAll();
-        List<Souvenir> filteredSouvenirs = souvenirs.stream()
-                .filter(souvenir -> souvenir.getName().equalsIgnoreCase(souvenirName))
-                .toList();
 
-       long id = souvenirs
+        Long id = souvenirs
                 .stream()
                 .filter(souvenir -> souvenir.getName().equals(souvenirName))
-                .mapToLong(Souvenir::getId) // Assuming there's a method getId() to get the ID of the Souvenir
+                .map(Souvenir::getId) // Assuming there's a method getId() to get the ID of the Souvenir
                 .findFirst() // Take the first matching souvenir's ID
-                .orElse(-1L);
+                .orElse(null);
         souvenirRepository.delete(id);
 
         System.out.print("Enter new name: ");
@@ -78,10 +80,7 @@ public class SouvenirService {
 
         System.out.print("Enter new price: ");
         double price = scanner.nextDouble();
-        souvenirs = souvenirRepository.getAll();
-        souvenirs.add((int) id, new Souvenir(id, name, manufacturer, productionDate, price));
-        souvenirRepository.saveAll(souvenirs);
-
+        souvenirRepository.add(new Souvenir(id, name, manufacturer, productionDate, price));
     }
     public void deleteSouvenir() throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, IOException {
 
@@ -90,44 +89,18 @@ public class SouvenirService {
         String souvenirName = scanner.nextLine();
 
         List<Souvenir> souvenirs = souvenirRepository.getAll();
-        long id = souvenirs
+        Long id = souvenirs
                 .stream()
                 .filter(souvenir -> souvenir.getName().equals(souvenirName))
-                .mapToLong(Souvenir::getId) // Assuming there's a method getId() to get the ID of the Souvenir
+                .map(Souvenir::getId) // Assuming there's a method getId() to get the ID of the Souvenir
                 .findFirst() // Take the first matching souvenir's ID
-                .orElse(-1L);
+                .orElse(null);
 
         souvenirRepository.delete(id);
     }
-
     public List<Souvenir> viewAllSouvenirs() throws IOException {
         return souvenirRepository.getAll();
     }
-
-    public void deleteSouvenirsByManufacturer() throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
-
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter manufacturer name : ");
-        String manufacturerName = scanner.nextLine();
-
-        List<Manufacturer> manufacturers = manufacturerRepository.getAll();
-        List<Souvenir> souvenirs = souvenirRepository.getAll();
-        List<Souvenir> matchingSouvenirs = souvenirs
-                .stream()
-                .filter(souvenir -> souvenir.getManufacturer().equalsIgnoreCase(manufacturerName))
-                .toList();
-        List<Souvenir> souvenirList = manufacturerRepository.deleteSouvenirsByManufacturer(souvenirs, matchingSouvenirs);
-
-
-        List<Manufacturer> matchingManufacturers = manufacturers
-                .stream()
-                .filter(manufacturer -> manufacturer.getName().equalsIgnoreCase(manufacturerName))
-                .toList();
-        manufacturers.removeAll(matchingManufacturers);
-        souvenirRepository.saveAll(souvenirList);
-        manufacturerRepository.saveAll(manufacturers);
-    }
-
     public List<Souvenir> getSouvenirsByManufacturer() throws IOException {
         Scanner scanner = new Scanner(System.in);
 
@@ -135,16 +108,27 @@ public class SouvenirService {
         String manufacturer = scanner.nextLine();
         return souvenirRepository.getSouvenirsByManufacturer(manufacturer);
     }
-
     public List<Souvenir> getSouvenirsByCountry() throws IOException {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter сountry: ");
         String country = scanner.nextLine();
-        return souvenirRepository.getSouvenirsByCountry(country);
+
+        List<Souvenir> souvenirs = souvenirRepository.getAll();
+        List<Manufacturer> manufacturers = manufacturerRepository.getAll();
+
+        Set<String> filteredManufacturers = manufacturers
+                .stream()
+                .filter(manufacturer -> manufacturer.getCountry().equalsIgnoreCase(country))
+                .map(Manufacturer::getName)
+                .collect(Collectors.toSet());
+        return souvenirs.stream()
+                .filter(souvenir -> filteredManufacturers.contains(souvenir.getManufacturer()))
+                .toList();
     }
     public Map<String, List<Souvenir>> souvenirsByYear() throws IOException {
-        List<Souvenir> souvenirs = souvenirRepository.getAll();
-        return souvenirRepository.souvenirsByYear(souvenirs);
+        return souvenirRepository.getAll()
+                .stream()
+                .collect(Collectors.groupingBy(Souvenir::getProductionDate));
     }
     public void printSouvenirsWithYear() throws IOException {
         Map<String, List<Souvenir>> souvenirsByYear = souvenirsByYear();

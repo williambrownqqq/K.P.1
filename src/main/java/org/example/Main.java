@@ -101,7 +101,7 @@ public class Main {
                     souvenirService.printSouvenirsWithYear();
                     break;
                 case 8:
-                    souvenirService.deleteSouvenirsByManufacturer();
+                    manufacturerService.deleteSouvenirsByManufacturer();
                     break;
                 case 9:
                     souvenirService.addSouvenir();;
@@ -182,43 +182,43 @@ public class Main {
         EntityWriter<Souvenir> souvenirEntityWriter = createEntityWriter(souvenirPath, Souvenir.class);
         Souvenir.SouvenirBuilder builder = new Souvenir.SouvenirBuilder();
 
-        Souvenir souvenir1 = builder.id(0L)
+        Souvenir souvenir1 = builder.id(1L)
                 .name("phone")
                 .manufacturer("Apple")
                 .productionDate("2023")
                 .price(1000)
                 .build();
-        Souvenir souvenir2 = builder.id(1L)
+        Souvenir souvenir2 = builder.id(2L)
                 .name("car")
                 .manufacturer("Ford")
                 .productionDate("2022")
                 .price(5000)
                 .build();
-        Souvenir souvenir3 = builder.id(2L)
+        Souvenir souvenir3 = builder.id(3L)
                 .name("plane")
                 .manufacturer("Antonov")
                 .productionDate("2021")
                 .price(9999)
                 .build();
-        Souvenir souvenir4 = builder.id(3L)
+        Souvenir souvenir4 = builder.id(4L)
                 .name("phone")
                 .manufacturer("Apple")
                 .productionDate("2020")
                 .price(700)
                 .build();
-        Souvenir souvenir5 = builder.id(4L)
+        Souvenir souvenir5 = builder.id(5L)
                 .name("phone")
                 .manufacturer("Apple")
                 .productionDate("2021")
                 .price(800)
                 .build();
-        Souvenir souvenir6 = builder.id(5L)
+        Souvenir souvenir6 = builder.id(6L)
                 .name("laptop")
                 .manufacturer("Dell")
                 .productionDate("2002")
                 .price(300)
                 .build();
-        Souvenir souvenir7 = builder.id(6L)
+        Souvenir souvenir7 = builder.id(7L)
                 .name("himars")
                 .manufacturer("Lockhead Martin")
                 .productionDate("2005")
