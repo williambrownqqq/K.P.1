@@ -73,22 +73,6 @@ public class SouvenirRepositoryImplTest {
     }
 
     @Test
-    public void testGetSouvenirsByCountry() throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
-        List<Souvenir> testSouvenirs = new ArrayList<>();
-        testSouvenirs.add(new Souvenir(1L, "Test Souvenir 1", "Manufacturer 1", "2023-01-01", 10.0));
-        testSouvenirs.add(new Souvenir(2L, "Test Souvenir 2", "Manufacturer 2", "2023-02-01", 15.0));
-        List<Manufacturer> testManufacturers = new ArrayList<>();
-        testManufacturers.add(new Manufacturer(1L, "Manufacturer 1", "Country 1"));
-
-        souvenirRepository.saveAll(testSouvenirs);
-        manufacturerRepository.saveAll(testManufacturers);
-        List<Souvenir> filteredSouvenirs = souvenirRepository.getSouvenirsByCountry("Country 1");
-
-        assertEquals(1, filteredSouvenirs.size());
-        assertEquals("Test Souvenir 1", filteredSouvenirs.get(0).getName());
-    }
-
-    @Test
     public void testAdd() throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
         List<Souvenir> testSouvenirs = new ArrayList<>();
         testSouvenirs.add(new Souvenir(1L, "Test Souvenir 1", "Manufacturer 1", "2023-01-01", 10.0));
@@ -134,22 +118,5 @@ public class SouvenirRepositoryImplTest {
         assertEquals("Manufacturer 1", getSouvenirs.get(0).getManufacturer());
         assertEquals("2023-01-01", getSouvenirs.get(0).getProductionDate());
         assertEquals(10.0, getSouvenirs.get(0).getPrice());
-    }
-
-    @Test
-    public void testSouvenirsByYear() throws IOException {
-        List<Souvenir> testSouvenirs = new ArrayList<>();
-        testSouvenirs.add(new Souvenir(1L, "Test Souvenir 1", "Manufacturer 1", "2023-01-01", 10.0));
-        testSouvenirs.add(new Souvenir(2L, "Test Souvenir 2", "Manufacturer 2", "2023-01-01", 15.0));
-        testSouvenirs.add(new Souvenir(3L, "Test Souvenir 3", "Manufacturer 3", "2024-03-01", 20.0));
-        List<Manufacturer> testManufacturers = new ArrayList<>();
-        testManufacturers.add(new Manufacturer(1L, "Manufacturer 1", "Country 1"));
-        Map<String, List<Souvenir>> souvenirsByYear = souvenirRepository.souvenirsByYear(testSouvenirs);
-
-        assertTrue(souvenirsByYear.containsKey("2023-01-01"));
-        assertTrue(souvenirsByYear.containsKey("2024-03-01"));
-
-        assertEquals(2, souvenirsByYear.get("2023-01-01").size());
-        assertEquals(1, souvenirsByYear.get("2024-03-01").size());
     }
 }

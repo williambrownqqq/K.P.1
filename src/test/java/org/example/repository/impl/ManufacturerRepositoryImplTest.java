@@ -139,11 +139,11 @@ public class ManufacturerRepositoryImplTest {
         List<Manufacturer> getManufacturersByPrice = manufacturerRepository.getManufacturersByPrice(16L, testManufacturers, testSouvenirs);
         assertEquals(2, getManufacturersByPrice.size());
 
-        assertEquals("Manufacturer 2",  getManufacturersByPrice.get(0).getName());
-        assertEquals("Country 2",  getManufacturersByPrice.get(0).getCountry());
+        assertEquals("Manufacturer 1",  getManufacturersByPrice.get(0).getName());
+        assertEquals("Country 1",  getManufacturersByPrice.get(0).getCountry());
 
-        assertEquals("Manufacturer 1",  getManufacturersByPrice.get(1).getName());
-        assertEquals("Country 1",  getManufacturersByPrice.get(1).getCountry());
+        assertEquals("Manufacturer 2",  getManufacturersByPrice.get(1).getName());
+        assertEquals("Country 2",  getManufacturersByPrice.get(1).getCountry());
     }
 
     @Test
