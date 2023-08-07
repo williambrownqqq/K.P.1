@@ -110,43 +110,4 @@ public class ManufacturerRepositoryImplTest {
         assertEquals("Country 1", getManufacturers.get(0).getCountry());
     }
 
-    @Test
-    public void testGetManufacturersByPrice() throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, IOException {
-        List<Manufacturer> testManufacturers = new ArrayList<>();
-        testManufacturers.add(new Manufacturer(0L, "Manufacturer 1", "Country 1"));
-        testManufacturers.add(new Manufacturer(1L, "Manufacturer 2", "Country 2"));
-        List<Souvenir> testSouvenirs = new ArrayList<>();
-        testSouvenirs.add(new Souvenir(1L, "Test Souvenir 1", "Manufacturer 1", "2023-01-01", 10.0));
-        testSouvenirs.add(new Souvenir(2L, "Test Souvenir 2", "Manufacturer 2", "2023-01-01", 15.0));
-        testSouvenirs.add(new Souvenir(3L, "Test Souvenir 3", "Manufacturer 2", "2024-03-01", 20.0));
-        manufacturerRepository.saveAll(testManufacturers);
-        souvenirRepository.saveAll(testSouvenirs);
-
-        List<Manufacturer> getManufacturersByPrice = manufacturerRepository.getManufacturersByPrice(16L, testManufacturers, testSouvenirs);
-        assertEquals(2, getManufacturersByPrice.size());
-
-        assertEquals("Manufacturer 1",  getManufacturersByPrice.get(0).getName());
-        assertEquals("Country 1",  getManufacturersByPrice.get(0).getCountry());
-
-        assertEquals("Manufacturer 2",  getManufacturersByPrice.get(1).getName());
-        assertEquals("Country 2",  getManufacturersByPrice.get(1).getCountry());
-    }
-
-    @Test
-    public void testGetManufacturersBySouvenirAndYear() throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, IOException {
-        List<Manufacturer> testManufacturers = new ArrayList<>();
-        testManufacturers.add(new Manufacturer(0L, "Manufacturer 1", "Country 1"));
-        testManufacturers.add(new Manufacturer(1L, "Manufacturer 2", "Country 2"));
-        List<Souvenir> testSouvenirs = new ArrayList<>();
-        testSouvenirs.add(new Souvenir(1L, "Test Souvenir 1", "Manufacturer 1", "2023-01-01", 10.0));
-        testSouvenirs.add(new Souvenir(2L, "Test Souvenir 2", "Manufacturer 2", "2023-01-01", 15.0));
-        testSouvenirs.add(new Souvenir(3L, "Test Souvenir 3", "Manufacturer 2", "2024-03-01", 20.0));
-        manufacturerRepository.saveAll(testManufacturers);
-        souvenirRepository.saveAll(testSouvenirs);
-
-        List<Manufacturer> getManufacturers = manufacturerRepository.getManufacturersBySouvenirAndYear("Test Souvenir 1","2023-01-01",testManufacturers, testSouvenirs);
-        assertEquals(1, getManufacturers.size());
-        assertEquals("Manufacturer 1", getManufacturers.get(0).getName());
-        assertEquals("Country 1", getManufacturers.get(0).getCountry());
-    }
 }

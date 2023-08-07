@@ -8,10 +8,7 @@ import org.example.reader.EntityReader;
 import org.example.repository.ManufacturerRepository;
 import org.example.repository.SouvenirRepository;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ManufacturerService {
@@ -67,7 +64,7 @@ public class ManufacturerService {
         String country = scanner.nextLine();
 
         manufacturers = manufacturerRepository.getAll();
-        manufacturers.add(new Manufacturer(id, name, country));
+        manufacturers.add(id.intValue()-1, new Manufacturer(id, name, country));
         manufacturerRepository.saveAll(manufacturers);
 
     }
@@ -95,7 +92,17 @@ public class ManufacturerService {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter price: ");
         double price = scanner.nextDouble();
-        return manufacturerRepository.getManufacturersByPrice(price, manufacturers, souvenirs);
+
+        Set<String> distinctFilteredManufacturersNames = souvenirs
+                .stream()
+                .filter(souvenir -> souvenir.getPrice() < price)
+                .map(Souvenir::getManufacturer)
+                .collect(Collectors.toSet());
+
+        return manufacturers
+                .stream()
+                .filter(manufacturer -> distinctFilteredManufacturersNames.contains(manufacturer.getName()))
+                .collect(Collectors.toList());
     }
     public Map<String, List<Souvenir>> getAllManufacturersWithSouvenirs() throws IOException {
         return souvenirRepository.getAll().stream()
@@ -128,7 +135,17 @@ public class ManufacturerService {
         System.out.print("Enter year: ");
         String productionDate = scanner.nextLine();
 
-        return manufacturerRepository.getManufacturersBySouvenirAndYear(name, productionDate, manufacturers, souvenirs);
+        return souvenirs.stream()
+                .filter(souvenir -> souvenir.getName().equalsIgnoreCase(name) &&
+                        souvenir.getProductionDate().equalsIgnoreCase(productionDate))
+                .map(Souvenir::getManufacturer)
+                .distinct() // Remove duplicate manufacturer names
+                .flatMap(manufacturerName ->
+                        manufacturers.stream()
+                                .filter(manufacturer -> manufacturer.getName().equalsIgnoreCase(manufacturerName))
+                )
+                .collect(Collectors.toList());
+        //return manufacturerRepository.getManufacturersBySouvenirAndYear(name, productionDate, manufacturers, souvenirs);
     }
 
     public void deleteSouvenirsByManufacturer() throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {

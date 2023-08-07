@@ -63,7 +63,7 @@ public class SouvenirService {
 
         Long id = souvenirs
                 .stream()
-                .filter(souvenir -> souvenir.getName().equals(souvenirName))
+                .filter(souvenir -> souvenir.getName().equalsIgnoreCase(souvenirName))
                 .map(Souvenir::getId) // Assuming there's a method getId() to get the ID of the Souvenir
                 .findFirst() // Take the first matching souvenir's ID
                 .orElse(null);
@@ -80,7 +80,9 @@ public class SouvenirService {
 
         System.out.print("Enter new price: ");
         double price = scanner.nextDouble();
-        souvenirRepository.add(new Souvenir(id, name, manufacturer, productionDate, price));
+        souvenirs = souvenirRepository.getAll();
+        souvenirs.add(id.intValue()-1, new Souvenir(id, name, manufacturer, productionDate, price));
+        souvenirRepository.saveAll(souvenirs);
     }
     public void deleteSouvenir() throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, IOException {
 

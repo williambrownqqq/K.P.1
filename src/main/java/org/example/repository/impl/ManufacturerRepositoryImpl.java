@@ -80,37 +80,24 @@ public class ManufacturerRepositoryImpl implements ManufacturerRepository {
         fileWriter.close();
     }
 
-    @Override
-    public List<Manufacturer> getManufacturersByPrice(double price, List<Manufacturer> manufacturers, List<Souvenir> souvenirs) throws IOException {
-        Set<String> distinctFilteredManufacturersNames = souvenirs
-                .stream()
-                .filter(souvenir -> souvenir.getPrice() < price)
-                .map(Souvenir::getManufacturer)
-                .collect(Collectors.toSet());
-
-        return manufacturers
-                .stream()
-                .filter(manufacturer -> distinctFilteredManufacturersNames.contains(manufacturer.getName()))
-                .collect(Collectors.toList());
-    }
-    @Override
-    public List<Manufacturer> getManufacturersBySouvenirAndYear(String name, String productionDate, List<Manufacturer> manufacturers, List<Souvenir> souvenirs) throws IOException {
-        // Filter the souvenirs based on the provided name and production year
-        List<Souvenir> filteredSouvenirs = souvenirs
-                .stream()
-                .filter(souvenir -> souvenir.getName().equalsIgnoreCase(name) &&
-                        souvenir.getProductionDate().equalsIgnoreCase(productionDate))
-                .toList();
-
-        // Extract the names of the manufacturers associated with the filtered souvenirs
-        List<String> manufacturerNames = filteredSouvenirs.stream()
-                .map(Souvenir::getManufacturer)
-                .collect(Collectors.toList());
-
-        // Filter the manufacturers based on the extracted names
-        List<Manufacturer> filteredManufacturers = manufacturers.stream()
-                .filter(manufacturer -> manufacturerNames.contains(manufacturer.getName()))
-                .collect(Collectors.toList());
-        return filteredManufacturers;
-    }
+//    @Override
+//    public List<Manufacturer> getManufacturersBySouvenirAndYear(String name, String productionDate, List<Manufacturer> manufacturers, List<Souvenir> souvenirs) throws IOException {
+//        // Filter the souvenirs based on the provided name and production year
+//        List<Souvenir> filteredSouvenirs = souvenirs
+//                .stream()
+//                .filter(souvenir -> souvenir.getName().equalsIgnoreCase(name) &&
+//                        souvenir.getProductionDate().equalsIgnoreCase(productionDate))
+//                .toList();
+//
+//        // Extract the names of the manufacturers associated with the filtered souvenirs
+//        List<String> manufacturerNames = filteredSouvenirs.stream()
+//                .map(Souvenir::getManufacturer)
+//                .collect(Collectors.toList());
+//
+//        // Filter the manufacturers based on the extracted names
+//        List<Manufacturer> filteredManufacturers = manufacturers.stream()
+//                .filter(manufacturer -> manufacturerNames.contains(manufacturer.getName()))
+//                .collect(Collectors.toList());
+//        return filteredManufacturers;
+//    }
 }
