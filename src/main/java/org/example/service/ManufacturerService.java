@@ -25,12 +25,6 @@ public class ManufacturerService {
         this.manufacturerRepository = manufacturerRepository;
         this.manufacturerEntityReader = manufacturerEntityReader;
     }
-
-    public List<Manufacturer> getAll() throws IOException {
-        List<Manufacturer> manufacturers = manufacturerEntityReader.readCsvFile();
-        return manufacturers;
-    }
-
     public List<Manufacturer> viewAllManufacturers() throws IOException {
         return manufacturerRepository.getAll();
     }
@@ -57,12 +51,12 @@ public class ManufacturerService {
         String manufacturerName = scanner.nextLine();
 
         List<Manufacturer> manufacturers = manufacturerRepository.getAll();
-        long id = manufacturers
+        Long id = manufacturers
                 .stream()
                 .filter(manufacturer -> manufacturer.getName().equalsIgnoreCase(manufacturerName))
-                .mapToLong(Manufacturer::getId) // Assuming there's a method getId() to get the ID of the Souvenir
+                .map(Manufacturer::getId) // Assuming there's a method getId() to get the ID of the Souvenir
                 .findFirst() // Take the first matching souvenir's ID
-                .orElse(-1L);
+                .orElse(null);
 
         manufacturerRepository.delete(id);
 
@@ -73,7 +67,7 @@ public class ManufacturerService {
         String country = scanner.nextLine();
 
         manufacturers = manufacturerRepository.getAll();
-        manufacturers.add((int)id, new Manufacturer(id, name, country));
+        manufacturers.add(new Manufacturer(id, name, country));
         manufacturerRepository.saveAll(manufacturers);
 
     }
@@ -86,11 +80,11 @@ public class ManufacturerService {
         List<Manufacturer> manufacturers = manufacturerRepository.getAll();
         Long id = manufacturers
                 .stream()
-                .filter(manufacturer -> manufacturer.getName().equals(manufacturerName))
+                .filter(manufacturer -> manufacturer.getName().equalsIgnoreCase(manufacturerName))
                 .map(Manufacturer::getId) // Assuming there's a method getId() to get the ID of the Souvenir
                 .findFirst() // Take the first matching souvenir's ID
                 .orElse(null);
-        manufacturerRepository.delete((long)id);
+        manufacturerRepository.delete(id);
     }
     public Manufacturer getManufacturerById(Integer id) throws IOException {
         return manufacturerRepository.getById(id);
@@ -104,8 +98,7 @@ public class ManufacturerService {
         return manufacturerRepository.getManufacturersByPrice(price, manufacturers, souvenirs);
     }
     public Map<String, List<Souvenir>> getAllManufacturersWithSouvenirs() throws IOException {
-        List<Souvenir> souvenirs = souvenirRepository.getAll();
-        return souvenirs.stream()
+        return souvenirRepository.getAll().stream()
                 .collect(Collectors.groupingBy(Souvenir::getManufacturer));
     }
     public void printAllManufacturersWithSouvenirs() throws IOException {

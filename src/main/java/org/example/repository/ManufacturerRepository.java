@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface ManufacturerRepository extends BaseRepository<Manufacturer>{
-    List<Souvenir> deleteSouvenirsByManufacturer(List<Souvenir> souvenirs, List<Souvenir> matchingSouvenir) throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, IOException;
     List<Manufacturer> getManufacturersByPrice(double price, List<Manufacturer> manufacturers, List<Souvenir> souvenirs) throws IOException;
     List<Manufacturer> getManufacturersBySouvenirAndYear(String name, String year, List<Manufacturer> manufacturers, List<Souvenir> souvenirs) throws IOException;
 }

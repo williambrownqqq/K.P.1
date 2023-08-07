@@ -11,8 +11,6 @@ import org.example.reader.EntityReader;
 import org.example.repository.ManufacturerRepository;
 import java.util.List;
 import java.util.Set;
-import java.util.Map;
-import java.util.ArrayList;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.stream.Collectors;
@@ -82,11 +80,6 @@ public class ManufacturerRepositoryImpl implements ManufacturerRepository {
         fileWriter.close();
     }
 
-    @Override
-    public List<Souvenir> deleteSouvenirsByManufacturer(List<Souvenir> souvenirs, List<Souvenir> matchingSouvenirs) throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, IOException {
-        souvenirs.removeAll(matchingSouvenirs);
-        return souvenirs;
-    }
     @Override
     public List<Manufacturer> getManufacturersByPrice(double price, List<Manufacturer> manufacturers, List<Souvenir> souvenirs) throws IOException {
         Set<String> distinctFilteredManufacturersNames = souvenirs

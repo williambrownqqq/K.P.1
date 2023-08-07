@@ -111,20 +111,6 @@ public class ManufacturerRepositoryImplTest {
     }
 
     @Test
-    public void testDeleteSouvenirsByManufacturer() throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, IOException {
-        List<Souvenir> testSouvenirs = new ArrayList<>();
-        testSouvenirs.add(new Souvenir(1L, "Test Souvenir 1", "Manufacturer 1", "2023-01-01", 10.0));
-        testSouvenirs.add(new Souvenir(2L, "Test Souvenir 2", "Manufacturer 2", "2023-01-01", 15.0));
-        testSouvenirs.add(new Souvenir(3L, "Test Souvenir 3", "Manufacturer 2", "2024-03-01", 20.0));
-        souvenirRepository.saveAll(testSouvenirs);
-        List<Souvenir> checkSouvenirs = manufacturerRepository.deleteSouvenirsByManufacturer(testSouvenirs, List.of(new Souvenir(2L, "Test Souvenir 2", "Manufacturer 2", "2023-01-01", 15.0)));
-
-        assertEquals(2, checkSouvenirs.size());
-        assertEquals("Test Souvenir 1", checkSouvenirs.get(0).getName());
-        assertEquals("Test Souvenir 3", checkSouvenirs.get(1).getName());
-    }
-
-    @Test
     public void testGetManufacturersByPrice() throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, IOException {
         List<Manufacturer> testManufacturers = new ArrayList<>();
         testManufacturers.add(new Manufacturer(0L, "Manufacturer 1", "Country 1"));
